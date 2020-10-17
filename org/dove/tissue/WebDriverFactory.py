@@ -2,6 +2,8 @@ import configparser as cp
 import os
 import platform
 import re
+import stat
+import tarfile
 import zipfile
 import requests
 
@@ -10,151 +12,199 @@ from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.ie.options import Options
 
 
+def set_file_executable(path):
+    if os.path.isfile(path) and not os.access(path, os.X_OK):
+        os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
+
+
 class WebDriverFactory:
     def __init__(self):
         self.os_name = platform.system()
         self.os_bit = platform.architecture()
-        self.config_file_name = "config.ini"
-        self.download_url = 'Already installed.'
-        self.chrome_driver_path = './driver/chrome'
-        self.firefox_driver_path = './driver/firefox'
-        self.edge_driver_path = './driver/edge'
-        self.ie_driver_path = './driver/ie'
+        self.config_name = "config.ini"
+        self.automation_browser = None
+        self.automation_local = True
+        self.automation_url = None
+        self.download_url = 'Executable driver found.'
+        self.chrome_driver_api_url = 'https://chromedriver.storage.googleapis.com'
+        self.chrome_driver_path = f'driver{os.path.sep}chrome'
+        self.chrome_driver_name = 'chromedriver.exe' if self.os_name == 'Windows' else 'chromedriver'
+        self.firefox_driver_api_url = 'https://github.com/mozilla/geckodriver/releases'
+        self.firefox_driver_path = f'driver{os.path.sep}firefox'
+        self.firefox_driver_name = 'geckodriver.exe' if self.os_name == 'Windows' else 'geckodriver'
+        self.edge_driver_api_url = 'https://msedgedriver.azureedge.net'
+        self.edge_driver_path = f'driver{os.path.sep}edge'
+        self.edge_driver_name = 'msedgedriver.exe' if self.os_name == 'Windows' else 'msedgedriver'
+        self.ie_driver_api_url = 'https://selenium-release.storage.googleapis.com'
+        self.ie_driver_path = f'driver{os.path.sep}ie'
+        self.ie_driver_name = 'IEDriverServer.exe'
 
-    def getConfig(self):
+    def set_config(self):
         config = cp.ConfigParser()
-        config.read(f'./{self.config_file_name}')
-        os.environ['browser'] = config.get('automation', 'test.automation.browser')
-        os.environ['local'] = config.get('automation', 'test.automation.local')
-        os.environ["url"] = config.get('automation', 'test.automation.url')
+        config.read(self.config_name)
+        item = config.get('automation', 'automation.browser')
+        if item in ['chrome', 'firefox', 'edge', 'ie', 'safari']:
+            self.automation_browser = item
+        else:
+            raise NotImplementedError(f'Unsupported browser name: {item}')
+        self.automation_local = config.get('automation', 'automation.local').lower() in ['true', 'y', 'yes']
+        if not self.automation_local:
+            self.automation_url = config.get('automation', 'automation.url')
 
-    def getChromeVersionFromShell(self):
+    def get_local_chrome_version(self):
         if self.os_name == 'Windows':
             with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version') as stream:
                 version = re.split(r'\s+', stream.readlines()[2].strip())[2]
-        elif self.os_name == 'Darwin':
+        else:
             with os.popen(r'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version') as stream:
                 version = stream.read().strip('Google Chrome ').strip()
+        print(f'Installed Chrome Browser version: {version}')
         return version
 
-    def downloadChromeDriver(self, version):
-        url = 'https://chromedriver.storage.googleapis.com'
-        latest_release = requests.get(f'{url}/LATEST_RELEASE_{re.split(r"[.]", version)[0]}')
-        self.chrome_driver_path += f'/{latest_release.text}'
+    def get_latest_chrome_version(self, version):
+        latest_release = requests.get(f'{self.chrome_driver_api_url}/LATEST_RELEASE_{re.split(r"[.]", version)[0]}')
+        self.chrome_driver_path += f'{os.path.sep}{latest_release.text}'
+        print(f'Latest Chromedriver version: {latest_release.text}')
+        return latest_release.text
+
+    def download_chromedriver(self, version):
         if not os.path.exists(self.chrome_driver_path):
-            self.download_url = f'{url}/{latest_release.text}/chromedriver_'
+            print('Not found on executable chromedriver. Chromedriver will be downloaded.')
+            self.download_url = f'{self.chrome_driver_api_url}/{version}/chromedriver_'
             if self.os_name == 'Windows':
                 self.download_url += 'win32.zip'
-            elif self.os_name == 'Darwin':
+            else:
                 self.download_url += 'mac64.zip'
-            elif self.os_name == 'Linux':
-                self.download_url += 'linux64.zip'
             file = requests.get(self.download_url, stream=True)
-            file_name = './chromedriver.zip'
+            file_name = 'chromedriver.zip'
             with open(file_name, 'wb') as fd:
+                print(f'Downloading from {self.download_url}')
                 for chunk in file:
                     fd.write(chunk)
             zipfile.ZipFile(file_name).extractall(self.chrome_driver_path)
             os.remove(file_name)
+        else:
+            print(f'{self.download_url}')
 
-    def chromeSetUp(self):
-        self.downloadChromeDriver(self.getChromeVersionFromShell())
+    def setup_chromedriver(self):
+        self.download_chromedriver(self.get_latest_chrome_version(self.get_local_chrome_version()))
+        set_file_executable(f'{self.chrome_driver_path}'
+                            f'{os.path.sep}{self.chrome_driver_name}')
+        os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(self.chrome_driver_path)}'
 
-    #    def getFirefoxVersionFromShell(self):
-    #        if os.environ["browser"] == 'firefox':
-    #            if platform.system() == 'Windows':
-    #                stream = os.popen('cd "C:\Program Files\Mozilla Firefox" & firefox -v|more')
-    #                local_v = re.split(r'\s+', stream.read())[2]
-    #            return local_v
-
-    def downloadFirefoxDriver(self):
-        url = 'https://github.com/mozilla/geckodriver/releases'
-        latest_release = requests.get(f'{url}/latest', allow_redirects=True)
-        gecko_version = re.split('[/]+', latest_release.url)[-1]
-        self.firefox_driver_path += f'/{gecko_version}'
+    def download_geckodriver(self):
+        latest_release = requests.get(f'{self.firefox_driver_api_url}/latest', allow_redirects=True)
+        gecko_version = re.split(r'[/]+', latest_release.url)[-1]
+        self.firefox_driver_path += f'{os.path.sep}{gecko_version}'
         if not os.path.exists(self.firefox_driver_path):
+            print(f'Not found on executable geckodriver. Geckodriver will be downloaded.')
+            self.download_url = f'{self.firefox_driver_api_url}/download/{gecko_version}' \
+                                f'/geckodriver-{gecko_version}-'
             if self.os_name == 'Windows':
-                machine = 'win32.zip' if self.os_bit == '32bit' else 'win64.zip'
-            elif self.os_name == 'Darwin':
-                machine = 'macos.tar.gz'
-            self.download_url = f'{url}/download/{gecko_version}/geckodriver-{gecko_version}-{machine}'
+                self.download_url += 'win32.zip' if self.os_bit == '32bit' else 'win64.zip'
+            else:
+                self.download_url += 'macos.tar.gz'
             file = requests.get(self.download_url, stream=True)
-            file_name = f'./{machine}'
+            file_name = 'geckodriver.zip' if self.os_name == 'Windows' else 'geckodriver.tar.gz'
             with open(file_name, 'wb') as fd:
+                print(f'Downloading from {self.download_url}')
                 for chunk in file:
                     fd.write(chunk)
-            zipfile.ZipFile(file_name).extractall(self.firefox_driver_path)
+            if self.os_name == 'Windows':
+                zipfile.ZipFile(file_name).extractall(self.firefox_driver_path)
+            else:
+                tar = tarfile.open(file_name, 'r:gz')
+                tar.extractall(self.firefox_driver_path)
+                tar.close()
             os.remove(file_name)
+        else:
+            print(f'{self.download_url}')
 
-    def firefoxSetUp(self):
-        self.downloadFirefoxDriver()
+    def setup_geckodriver(self):
+        self.download_geckodriver()
+        set_file_executable(f'{self.firefox_driver_path}'
+                            f'{os.path.sep}{self.firefox_driver_name}')
+        os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(self.firefox_driver_path)}'
 
-    def getEdgeVersionFromShell(self):
+    def get_local_edge_version(self):
         if self.os_name == 'Windows':
             with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version') as stream:
                 version = re.split(r'\s+', stream.readlines()[2].strip())[2]
+        else:
+            with os.popen(r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version') as stream:
+                version = stream.read().strip('Microsoft Edge ').strip()
+        print(f'Installed Edge Browser version: {version}')
         return version
 
-    def downloadEdgeDriver(self, version):
-        url = 'https://msedgedriver.azureedge.net'
-        self.edge_driver_path += f'/{version}'
+    def download_edgedriver(self, version):
+        self.edge_driver_path += f'{os.path.sep}{version}'
         if not os.path.exists(self.edge_driver_path):
-            self.download_url = f'{url}/{version}/edgedriver_'
+            print(f'Not found on executable edgedriver. Edgedriver will be downloaded.')
+            self.download_url = f'{self.edge_driver_api_url}/{version}/edgedriver_'
             if self.os_name == 'Windows':
                 self.download_url += 'win64.zip' if self.os_bit == '64bit' else 'win32.zip'
-            elif platform.system() == 'Darwin':
+            else:
                 self.download_url += 'mac64.zip'
             file = requests.get(self.download_url, stream=True)
-            file_name = './msedgedriver.zip'
+            file_name = 'msedgedriver.zip'
             with open(file_name, 'wb') as fd:
+                print(f'Downloading from {self.download_url}')
                 for chunk in file:
                     fd.write(chunk)
             zipfile.ZipFile(file_name).extractall(self.edge_driver_path)
             os.remove(file_name)
+        else:
+            print(f'{self.download_url}')
 
-    def edgeSetUp(self):
-        self.downloadEdgeDriver(self.getEdgeVersionFromShell())
+    def setup_edgedriver(self):
+        self.download_edgedriver(self.get_local_edge_version())
+        set_file_executable(f'{self.edge_driver_path}'
+                            f'{os.path.sep}{self.edge_driver_name}')
+        os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(self.edge_driver_path)}'
 
-    def downloadInternetExplorerDriver(self):
-        url = 'https://selenium-release.storage.googleapis.com'
+    def download_iedriver(self):
         if not os.path.exists(self.ie_driver_path):
-            self.download_url = f'{url}/3.150/IEDriverServer_Win32_3.150.1.zip'
+            print(f'Not found on executable iedriver. IE driver will be downloaded.')
+            self.download_url = f'{self.ie_driver_api_url}/3.150/IEDriverServer_Win32_3.150.1.zip'
             file = requests.get(self.download_url, stream=True)
-            file_name = './IEDriverServer.zip'
+            file_name = 'IEDriverServer.zip'
             with open(file_name, 'wb') as fd:
+                print(f'Downloading from {self.download_url}')
                 for chunk in file:
                     fd.write(chunk)
             zipfile.ZipFile(file_name).extractall(self.ie_driver_path)
             os.remove(file_name)
+        else:
+            print(f'{self.download_url}')
 
-    def ieSetUp(self):
-        self.downloadInternetExplorerDriver()
+    def setup_iedriver(self):
+        self.download_iedriver()
+        os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(self.ie_driver_path)}'
 
-    def create(self):
-        self.getConfig()
-        if os.environ['browser'] == 'chrome':
-            if os.environ["local"].lower() in ['true', 'y', 'yes']:
-                self.chromeSetUp()
-                return webdriver.Chrome(executable_path=f'{self.chrome_driver_path}/chromedriver.exe' if self.os_name == 'Windows'
-                                        else f'{self.chrome_driver_path}/chromedriver')
-        elif os.environ['browser'] == 'firefox':
-            if os.environ["local"].lower() in ['true', 'y', 'yes']:
-                self.firefoxSetUp()
-                return webdriver.Firefox(executable_path=f'{self.firefox_driver_path}/geckodriver.exe' if platform.system() == 'Windows'
-                                         else f'{self.firefox_driver_path}/geckodriver')
-        elif os.environ['browser'] == 'MicrosoftEdge':
-            self.edgeSetUp()
-            return webdriver.Edge(executable_path=f'{self.edge_driver_path}/msedgedriver.exe' if platform.system() == 'Windows'
-                                  else f'{self.edge_driver_path}/msedgedriver')
-        elif os.environ['browser'] == 'internet explorer':
-            self.ieSetUp()
-            option = Options()
-            option.ignore_protected_mode_settings = True
-            option.ensure_clean_session = True
-            option.require_window_focus = True
-            option.ignore_zoom_level = True
-            return webdriver.Ie(executable_path=f'{self.ie_driver_path}/IEDriverServer.exe', options=option)
-        elif os.environ['browser'] == 'safari':
+    def launch(self):
+        self.set_config()
+        if self.automation_browser == 'chrome':
+            if self.automation_local:
+                self.setup_chromedriver()
+                return webdriver.Chrome()
+        elif self.automation_browser == 'firefox':
+            if self.automation_local:
+                self.setup_geckodriver()
+                return webdriver.Firefox()
+        elif self.automation_browser == 'edge':
+            self.setup_edgedriver()
+            return webdriver.Edge()
+        elif self.automation_browser == 'ie':
+            self.setup_iedriver()
+            ie_options = Options()
+            ie_options.ignore_protected_mode_settings = True
+            ie_options.ensure_clean_session = True
+            ie_options.require_window_focus = True
+            ie_options.ignore_zoom_level = True
+            return webdriver.Ie(options=ie_options)
+        elif self.automation_browser == 'safari':
             return webdriver.Safari()
-        return webdriver.Remote(desired_capabilities=DesiredCapabilities.CHROME.copy() if os.environ["browser"] == 'chrome'
-                                else DesiredCapabilities.FIREFOX.copy(), command_executor=os.environ["url"])
+        return webdriver.Remote(command_executor=self.automation_url,
+                                desired_capabilities=DesiredCapabilities.CHROME.copy()
+                                if self.automation_browser == 'chrome'
+                                else DesiredCapabilities.FIREFOX.copy())
