@@ -1,15 +1,20 @@
 import unittest
 
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.events import EventFiringWebDriver
 
-from org.dove.tissue.CustomWebDriverEventListener import CustomWebDriverEventListener
-from org.dove.tissue.WebDriverFactory import WebDriverFactory
+import Logger
+from EventListener import EventListener
+from WebDriverFactory import WebDriverFactory
+
+logger = Logger.get_logger('test')
 
 
 class TestTemplate(unittest.TestCase):
     def setUp(self):
         core = WebDriverFactory().launch()
-        self.driver = EventFiringWebDriver(core, CustomWebDriverEventListener()).wrapped_driver
+        logger.info(f'Browser launched.\nDriver Capabilities: {core.capabilities}')
+        self.driver = EventFiringWebDriver(core, EventListener())
         self.driver.maximize_window()
 
     def tearDown(self):
@@ -19,6 +24,10 @@ class TestTemplate(unittest.TestCase):
         self.driver.get('https://www.google.com')
         self.driver.get('https://www.naver.com')
         print(self.driver.title)
+        naver = self.driver.find_element(By.CSS_SELECTOR, '.logo_naver')
+        naver.click()
+        self.driver.back()
+
 
 if __name__ == '__main__':
     unittest.main()
