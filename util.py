@@ -1,8 +1,17 @@
 import logging
 import os
 
-dir_name = 'logs'
-file_name = f'{dir_name}{os.path.sep}output.log'
+import val
+
+
+def parse_boolean(arg):
+    return arg.lower() in ['true', 'y', 'yes']
+
+
+def set_file_executable(path):
+    if os.path.isfile(path) and not os.access(path, os.X_OK):
+        import stat
+        os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
 
 
 def get_logger(name=None):
@@ -11,9 +20,9 @@ def get_logger(name=None):
     formatter = logging.Formatter('%(asctime)s %(levelname)-5s [%(name)s] '
                                   '%(funcName)s(%(pathname)s:%(lineno)d): %(message)s')
     console = logging.StreamHandler()
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-    file_handler = logging.FileHandler(filename=file_name)
+    if not os.path.exists(val.LOG_DIR):
+        os.makedirs(val.LOG_DIR)
+    file_handler = logging.FileHandler(filename=f'{val.LOG_DIR}{os.path.sep}{val.LOG_FILE}{val.LOG}')
     console.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
     console.setFormatter(formatter)
