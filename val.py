@@ -27,7 +27,7 @@ GECKODRIVER = f'{GECKO}{DRIVER}'
 GECKODRIVER_NAME = f'{GECKODRIVER}{EXE}' if OS_NAME == WIN else GECKODRIVER
 EDGEDRIVER_API = 'https://msedgedriver.azureedge.net'
 EDGE = 'edge'
-EDGEDRIVER = 'MicrosoftWebDriver'
+EDGEDRIVER = f'msedge{DRIVER}'
 EDGEDRIVER_NAME = f'{EDGEDRIVER}{EXE}' if OS_NAME == WIN else EDGEDRIVER
 IEDRIVER_API = 'https://selenium-release.storage.googleapis.com'
 IE = 'ie'

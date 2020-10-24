@@ -168,32 +168,38 @@ class WebDriverFactory:
         os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(self._driver_path)}'
 
     def launch(self):
-        from selenium.webdriver import DesiredCapabilities
         self._set_config()
+        from selenium.webdriver import DesiredCapabilities
         if self._automation_browser == CHROME and self._automation_local:
             self.setup_chromedriver()
-            return webdriver.Chrome()
+            return webdriver.Chrome(desired_capabilities=DesiredCapabilities.CHROME.copy())
         elif self._automation_browser == GECKO and self._automation_local:
             self.setup_geckodriver()
-            return webdriver.Firefox(service_log_path=os.path.join(ROOT_DIR, LOG_DIR, f'{GECKODRIVER}{LOG}'))
+            return webdriver.Firefox(desired_capabilities=DesiredCapabilities.FIREFOX.copy(),
+                                     service_log_path=os.path.join(ROOT_DIR, LOG_DIR, f'{GECKODRIVER}{LOG}'))
         elif self._automation_browser == EDGE:
             self.setup_edgedriver()
-            return webdriver.Edge()
+            from msedge.selenium_tools import Edge, EdgeOptions
+            options = EdgeOptions()
+            options.use_chromium = True
+            options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')
+            return Edge(options=options)
         elif self._automation_browser == IE:
             if OS_NAME == MAC:
                 raise NotImplementedError('Cannot launch IE browser on Mac.')
             self.setup_iedriver()
-            from selenium.webdriver.ie.options import Options
-            ie_options = Options()
-            ie_options.ignore_protected_mode_settings = True
-            ie_options.ensure_clean_session = True
-            ie_options.require_window_focus = True
-            ie_options.ignore_zoom_level = True
-            return webdriver.Ie(options=ie_options)
+            from selenium.webdriver import IeOptions
+            options = IeOptions()
+            options.ignore_protected_mode_settings = True
+            options.ensure_clean_session = True
+            options.require_window_focus = True
+            options.ignore_zoom_level = True
+            return webdriver.Ie(desired_capabilities=DesiredCapabilities.INTERNETEXPLORER.copy(),
+                                options=options)
         elif self._automation_browser == SAFARI:
             if OS_NAME == WIN:
                 raise NotImplementedError('Cannot launch safari browser on Windows.')
-            return webdriver.Safari()
+            return webdriver.Safari(desired_capabilities=DesiredCapabilities.SAFARI.copy())
         return webdriver.Remote(command_executor=self._automation_url,
                                 desired_capabilities=DesiredCapabilities.CHROME.copy()
                                 if self._automation_browser == CHROME
