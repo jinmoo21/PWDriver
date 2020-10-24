@@ -1,6 +1,7 @@
 import unittest
 
 from selenium import webdriver
+from selenium.webdriver import IeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -11,11 +12,17 @@ import util
 logger = util.get_logger('ie')
 
 
-class Ie(unittest.TestCase):
+class IeTest(unittest.TestCase):
     def setUp(self):
+
         WebDriverFactory().setup_iedriver()
-        self.driver1 = webdriver.Ie()
-        self.driver2 = webdriver.Ie()
+        options = IeOptions()
+        options.ignore_protected_mode_settings = True
+        options.ensure_clean_session = True
+        options.require_window_focus = True
+        options.ignore_zoom_level = True
+        self.driver1 = webdriver.Ie(options=options)
+        self.driver2 = webdriver.Ie(options=options)
         self.driver1.maximize_window()
         self.wait1 = WebDriverWait(self.driver1, 5)
         self.wait2 = WebDriverWait(self.driver2, 5)

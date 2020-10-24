@@ -12,14 +12,14 @@ import util
 logger = util.get_logger('edge')
 
 
-class MsEdge(unittest.TestCase):
+class EdgeTest(unittest.TestCase):
     def setUp(self):
         WebDriverFactory().setup_edgedriver()
-        edge_options = EdgeOptions()
-        edge_options.use_chromium = True
-        edge_options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')
-        self.driver1 = Edge(options=edge_options)
-        self.driver2 = Edge(options=edge_options)
+        options = EdgeOptions()
+        options.use_chromium = True
+        options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')
+        self.driver1 = Edge(options=options)
+        self.driver2 = Edge(options=options)
         self.driver1.maximize_window()
         self.wait1 = WebDriverWait(self.driver1, 5)
         self.wait2 = WebDriverWait(self.driver2, 5)

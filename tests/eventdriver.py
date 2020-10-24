@@ -13,7 +13,7 @@ from util import get_logger
 logger = get_logger('test')
 
 
-class EventDriver(unittest.TestCase):
+class EventDriverTest(unittest.TestCase):
     def setUp(self):
         core1 = WebDriverFactory().launch()
         core2 = WebDriverFactory().launch()

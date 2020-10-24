@@ -11,7 +11,7 @@ import util
 logger = util.get_logger('chrome')
 
 
-class Chrome(unittest.TestCase):
+class ChromeTest(unittest.TestCase):
     def setUp(self):
         WebDriverFactory().setup_chromedriver()
         self.driver1 = webdriver.Chrome()

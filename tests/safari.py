@@ -10,7 +10,7 @@ import util
 logger = util.get_logger('safari')
 
 
-class Safari(unittest.TestCase):
+class SafariTest(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Safari()
         self.driver.maximize_window()

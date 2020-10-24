@@ -4,7 +4,7 @@ import platform
 OS_NAME = platform.system()
 WIN = 'Windows'
 MAC = 'Darwin'
-OS_BIT = platform.architecture()
+OS_BIT = platform.architecture()[0]
 X86 = '32bit'
 X64 = '64bit'
 EXE = '.exe'

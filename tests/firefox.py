@@ -11,7 +11,7 @@ import util
 logger = util.get_logger('firefox')
 
 
-class Firefox(unittest.TestCase):
+class FirefoxTest(unittest.TestCase):
     def setUp(self):
         WebDriverFactory().setup_geckodriver()
         self.driver1 = webdriver.Firefox()
