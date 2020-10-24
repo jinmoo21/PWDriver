@@ -1,16 +1,17 @@
 from selenium.webdriver.support.abstract_event_listener import AbstractEventListener
 
-import util
+from util import get_logger
 
-logger = util.get_logger('listener')
+
+logger = get_logger('listener')
 
 
 class EventListener(AbstractEventListener):
     def before_navigate_to(self, url, driver):
         logger.info(f'{driver.current_url} -> {url}')
 
-    # def before_navigate_back(self, driver):
-        #logger.info(f'{driver.current_url} -> history.back')
+    def before_navigate_back(self, driver):
+        logger.info(f'{driver.current_url} -> history.back')
 
     def before_navigate_forward(self, driver):
         logger.info(f'{driver.current_url} -> history.forward')

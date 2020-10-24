@@ -1,11 +1,18 @@
-import logging
 import os
-
-import val
+import re
 
 
 def parse_boolean(arg):
     return arg.lower() in ['true', 'y', 'yes']
+
+
+def get_pattern_matched_file(path, regex):
+    file_list = []
+    pattern = re.compile(regex)
+    for file in os.listdir(path):
+        if pattern.match(file):
+            file_list.append(file)
+    return file_list
 
 
 def set_file_executable(path):
@@ -15,14 +22,18 @@ def set_file_executable(path):
 
 
 def get_logger(name=None):
+    import logging
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s %(levelname)-5s [%(name)s] '
                                   '%(funcName)s(%(pathname)s:%(lineno)d): %(message)s')
     console = logging.StreamHandler()
-    if not os.path.exists(val.LOG_DIR):
-        os.makedirs(val.LOG_DIR)
-    file_handler = logging.FileHandler(filename=f'{val.LOG_DIR}{os.path.sep}{val.LOG_FILE}{val.LOG}')
+    from val import LOG_DIR
+    from val import LOG_NAME
+    from val import ROOT_DIR
+    if not os.path.exists(os.path.join(ROOT_DIR, LOG_DIR)):
+        os.makedirs(os.path.join(ROOT_DIR, LOG_DIR))
+    file_handler = logging.FileHandler(os.path.join(ROOT_DIR, LOG_DIR, LOG_NAME))
     console.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
     console.setFormatter(formatter)
