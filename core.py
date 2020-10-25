@@ -120,8 +120,7 @@ class WebDriverFactory:
         if not os.path.isfile(os.path.join(self._driver_path, EDGEDRIVER_NAME)):
             logger.info(f'Not found executable edgedriver. Edgedriver will be downloaded.')
             self._download_url = f'{EDGEDRIVER_API}/{version}/edgedriver_' \
-                                 + (('win64.zip' if OS_BIT == X64 else 'win32.zip') if OS_NAME == WIN
-                                    else 'mac64.zip')
+                                 + (('win64.zip' if OS_BIT == X64 else 'win32.zip') if OS_NAME == WIN else 'mac64.zip')
             file = requests.get(self._download_url, stream=True)
             file_name = f'{EDGEDRIVER}{ZIP}'
             with open(file_name, 'wb') as fd:
@@ -195,7 +194,6 @@ class WebDriverFactory:
         if self._automation_browser == EDGE:
             self.setup_edgedriver()
             edge_capabilities = DesiredCapabilities.EDGE.copy()
-            print(edge_capabilities)
             if options is not None:
                 edge_capabilities.update(options.to_capabilities())
                 if desired_capabilities is not None:
@@ -208,7 +206,6 @@ class WebDriverFactory:
             edge_options.use_chromium = True
             edge_options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')
             edge_capabilities.update(edge_options.to_capabilities())
-            print(edge_capabilities)
             return Edge(desired_capabilities=edge_options.to_capabilities())
         if self._automation_browser == IE:
             if OS_NAME == MAC:
