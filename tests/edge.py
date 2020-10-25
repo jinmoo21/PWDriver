@@ -1,6 +1,5 @@
 import unittest
 
-from msedge.selenium_tools import Edge, EdgeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -15,6 +14,7 @@ logger = util.get_logger('edge')
 class EdgeTest(unittest.TestCase):
     def setUp(self):
         WebDriverFactory().setup_edgedriver()
+        from msedge.selenium_tools import Edge, EdgeOptions
         options = EdgeOptions()
         options.use_chromium = True
         options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')

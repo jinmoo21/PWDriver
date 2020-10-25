@@ -11,7 +11,6 @@ from val import CONFIG_NAME, CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVE
     IEDRIVER_API, IEDRIVER_NAME, LOG, LOG_DIR, MAC, OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, WIN, X64, ZIP
 import util
 
-
 logger = util.get_logger('core')
 
 
@@ -48,7 +47,7 @@ class WebDriverFactory:
     def _download_chromedriver(self, version):
         if not os.path.isfile(os.path.join(self._driver_path, CHROMEDRIVER_NAME)):
             logger.info('Not found executable chromedriver. Chromedriver will be downloaded.')
-            self._download_url = f'{CHROMEDRIVER_API}/{version}/chromedriver_'\
+            self._download_url = f'{CHROMEDRIVER_API}/{version}/chromedriver_' \
                                  + ('win32.zip' if OS_NAME == WIN else 'mac64.zip')
             file = requests.get(self._download_url, stream=True)
             file_name = f'{CHROMEDRIVER}{ZIP}'
@@ -78,7 +77,7 @@ class WebDriverFactory:
     def _download_geckodriver(self, version):
         if not os.path.isfile(os.path.join(self._driver_path, GECKODRIVER_NAME)):
             logger.info(f'Not found executable geckodriver. Geckodriver will be downloaded.')
-            self._download_url = f'{GECKODRIVER_API}/download/{version}/geckodriver-{version}-'\
+            self._download_url = f'{GECKODRIVER_API}/download/{version}/geckodriver-{version}-' \
                                  + (('win64.zip' if OS_BIT == X64 else 'win32.zip') if OS_NAME == WIN
                                     else 'macos.tar.gz')
             file = requests.get(self._download_url, stream=True)
@@ -120,7 +119,7 @@ class WebDriverFactory:
         self._driver_path = os.path.join(ROOT_DIR, DRIVER, EDGE, version)
         if not os.path.isfile(os.path.join(self._driver_path, EDGEDRIVER_NAME)):
             logger.info(f'Not found executable edgedriver. Edgedriver will be downloaded.')
-            self._download_url = f'{EDGEDRIVER_API}/{version}/edgedriver_'\
+            self._download_url = f'{EDGEDRIVER_API}/{version}/edgedriver_' \
                                  + (('win64.zip' if OS_BIT == X64 else 'win32.zip') if OS_NAME == WIN
                                     else 'mac64.zip')
             file = requests.get(self._download_url, stream=True)
@@ -167,40 +166,81 @@ class WebDriverFactory:
         self._download_iedriver()
         os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(self._driver_path)}'
 
-    def launch(self):
-        self._set_config()
+    def launch(self, desired_capabilities=None, options=None):
         from selenium.webdriver import DesiredCapabilities
+        self._set_config()
         if self._automation_browser == CHROME and self._automation_local:
             self.setup_chromedriver()
-            return webdriver.Chrome(desired_capabilities=DesiredCapabilities.CHROME.copy())
-        elif self._automation_browser == GECKO and self._automation_local:
+            chrome_capabilities = DesiredCapabilities.CHROME.copy()
+            if options is not None:
+                chrome_capabilities.update(options.to_capabilities())
+                if desired_capabilities is not None:
+                    chrome_capabilities.update(desired_capabilities)
+            else:
+                if desired_capabilities is not None:
+                    chrome_capabilities.update(desired_capabilities)
+            return webdriver.Chrome(desired_capabilities=chrome_capabilities)
+        if self._automation_browser == GECKO and self._automation_local:
             self.setup_geckodriver()
-            return webdriver.Firefox(desired_capabilities=DesiredCapabilities.FIREFOX.copy(),
+            firefox_capabilities = DesiredCapabilities.FIREFOX.copy()
+            if options is not None:
+                firefox_capabilities.update(options.to_capabilities())
+                if desired_capabilities is not None:
+                    firefox_capabilities.update(desired_capabilities)
+            else:
+                if desired_capabilities is not None:
+                    firefox_capabilities.update(desired_capabilities)
+            return webdriver.Firefox(desired_capabilities=firefox_capabilities,
                                      service_log_path=os.path.join(ROOT_DIR, LOG_DIR, f'{GECKODRIVER}{LOG}'))
-        elif self._automation_browser == EDGE:
+        if self._automation_browser == EDGE:
             self.setup_edgedriver()
+            edge_capabilities = DesiredCapabilities.EDGE.copy()
+            print(edge_capabilities)
+            if options is not None:
+                edge_capabilities.update(options.to_capabilities())
+                if desired_capabilities is not None:
+                    edge_capabilities.update(desired_capabilities)
+            else:
+                if desired_capabilities is not None:
+                    edge_capabilities.update(desired_capabilities)
             from msedge.selenium_tools import Edge, EdgeOptions
-            options = EdgeOptions()
-            options.use_chromium = True
-            options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')
-            return Edge(options=options)
-        elif self._automation_browser == IE:
+            edge_options = EdgeOptions()
+            edge_options.use_chromium = True
+            edge_options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')
+            edge_capabilities.update(edge_options.to_capabilities())
+            print(edge_capabilities)
+            return Edge(desired_capabilities=edge_options.to_capabilities())
+        if self._automation_browser == IE:
             if OS_NAME == MAC:
                 raise NotImplementedError('Cannot launch IE browser on Mac.')
             self.setup_iedriver()
+            ie_capabilities = DesiredCapabilities.INTERNETEXPLORER.copy()
+            if options is not None:
+                ie_capabilities.update(options.to_capabilities())
+                if desired_capabilities is not None:
+                    ie_capabilities.update(desired_capabilities)
+            else:
+                if desired_capabilities is not None:
+                    ie_capabilities.update(desired_capabilities)
             from selenium.webdriver import IeOptions
-            options = IeOptions()
-            options.ignore_protected_mode_settings = True
-            options.ensure_clean_session = True
-            options.require_window_focus = True
-            options.ignore_zoom_level = True
-            return webdriver.Ie(desired_capabilities=DesiredCapabilities.INTERNETEXPLORER.copy(),
-                                options=options)
-        elif self._automation_browser == SAFARI:
+            ie_options = IeOptions()
+            ie_options.ignore_protected_mode_settings = True
+            ie_options.ensure_clean_session = True
+            ie_options.require_window_focus = True
+            ie_options.ignore_zoom_level = True
+            ie_capabilities.update(ie_options.to_capabilities())
+            return webdriver.Ie(desired_capabilities=ie_capabilities)
+        if self._automation_browser == SAFARI:
             if OS_NAME == WIN:
                 raise NotImplementedError('Cannot launch safari browser on Windows.')
-            return webdriver.Safari(desired_capabilities=DesiredCapabilities.SAFARI.copy())
-        return webdriver.Remote(command_executor=self._automation_url,
-                                desired_capabilities=DesiredCapabilities.CHROME.copy()
-                                if self._automation_browser == CHROME
-                                else DesiredCapabilities.FIREFOX.copy())
+            return webdriver.Safari(desired_capabilities=desired_capabilities)
+        remote_capabilities = DesiredCapabilities.CHROME.copy() if self._automation_browser == CHROME \
+            else DesiredCapabilities.FIREFOX.copy()
+        if options is not None:
+            remote_capabilities.update(options.to_capabilities())
+            if desired_capabilities is not None:
+                remote_capabilities.update(desired_capabilities)
+        else:
+            if desired_capabilities is not None:
+                remote_capabilities.update(desired_capabilities)
+        return webdriver.Remote(command_executor=self._automation_url, desired_capabilities=remote_capabilities)

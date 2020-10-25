@@ -10,7 +10,7 @@ from listener import EventListener
 from util import get_logger
 
 
-logger = get_logger('test')
+logger = get_logger('eventdriver')
 
 
 class EventDriverTest(unittest.TestCase):
