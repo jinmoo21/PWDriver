@@ -17,7 +17,7 @@ def get_pattern_matched_file(path, regex):
 
 def get_absolute_path_of_file(name):
     from pathlib import Path
-    from pydriver.val import ROOT_DIR
+    from pwdriver.val import ROOT_DIR
     for path in Path(ROOT_DIR).rglob(name):
         return os.path.abspath(path.name)
 
@@ -35,7 +35,7 @@ def get_logger(name=None):
     formatter = logging.Formatter('%(asctime)s %(levelname)-5s [%(name)s] '
                                   '%(funcName)s(%(pathname)s:%(lineno)d): %(message)s')
     console = logging.StreamHandler()
-    from pydriver.val import LOG_DIR, LOG_NAME, ROOT_DIR
+    from pwdriver.val import LOG_DIR, LOG_NAME, ROOT_DIR
     print(ROOT_DIR)
     if not os.path.exists(os.path.join(ROOT_DIR, LOG_DIR)):
         os.makedirs(os.path.join(ROOT_DIR, LOG_DIR))

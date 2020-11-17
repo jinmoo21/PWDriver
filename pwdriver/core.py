@@ -6,10 +6,10 @@ import zipfile
 
 from selenium import webdriver
 
-from pydriver.val import CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, EDGE, EDGEDRIVER, \
+from pwdriver.val import CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, EDGE, EDGEDRIVER, \
     EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, GECKODRIVER_NAME, IE, IEDRIVER, \
     IEDRIVER_API, IEDRIVER_NAME, INI, LOG, LOG_DIR, OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP
-from pydriver import util
+from pwdriver import util
 
 logger = util.get_logger('core')
 

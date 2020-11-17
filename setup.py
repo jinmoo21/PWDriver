@@ -4,7 +4,7 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='pydriver',
+    name='pwdriver',
     version='0.1',
     license='MIT',
     author='Jinmoo Han',

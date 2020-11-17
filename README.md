@@ -1,4 +1,4 @@
-Pydriver
+PWDriver (PyWebDriver)
 ======================
 
 ## Motivation
@@ -57,7 +57,7 @@ Now, we could launch webdriver.
 'automation.browser' you set will be created.   
 
 ```python
-from pydriver.core import WebDriverFactory
+from pwdriver.core import WebDriverFactory
 
 driver = WebDriverFactory().launch()
 ```
@@ -68,7 +68,7 @@ Use with Chrome:
 
 ```python
 from selenium import webdriver
-from pydriver.core import WebDriverFactory
+from pwdriver.core import WebDriverFactory
 
 WebDriverFactory.setup_chromedriver()
 driver = webdriver.Chrome()
@@ -78,7 +78,7 @@ Use with FireFox:
 
 ```python
 from selenium import webdriver
-from pydriver.core import WebDriverFactory
+from pwdriver.core import WebDriverFactory
 
 WebDriverFactory.setup_geckodriver()
 driver = webdriver.firefox()
@@ -89,7 +89,7 @@ Use with Edge
 ```python
 
 from msedge.selenium_tools import Edge, EdgeOptions
-from pydriver.core import WebDriverFactory
+from pwdriver.core import WebDriverFactory
 
 WebDriverFactory.setup_edgedriver()
 options = EdgeOptions()
@@ -102,7 +102,7 @@ Use with IE
 
 ```python
 from selenium import webdriver
-from pydriver.core import WebDriverFactory
+from pwdriver.core import WebDriverFactory
 
 WebDriverFactory.setup_iedriver()
 driver = webdriver.Ie()

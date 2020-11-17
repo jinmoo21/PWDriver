@@ -4,9 +4,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from pydriver.core import WebDriverFactory
-from pydriver.val import OS_NAME
-from pydriver import util
+from pwdriver.core import WebDriverFactory
+from pwdriver.val import OS_NAME
+from pwdriver import util
 
 logger = util.get_logger('edge')
 

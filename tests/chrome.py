@@ -5,8 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from pydriver.core import WebDriverFactory
-from pydriver import util
+from pwdriver.core import WebDriverFactory
+from pwdriver import util
 
 logger = util.get_logger('chrome')
 
