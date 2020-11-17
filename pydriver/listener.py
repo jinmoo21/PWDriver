@@ -1,6 +1,6 @@
 from selenium.webdriver.support.abstract_event_listener import AbstractEventListener
 
-from util import get_logger
+from pydriver.util import get_logger
 
 
 logger = get_logger('listener')

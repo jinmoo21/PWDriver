@@ -4,9 +4,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from core import WebDriverFactory
-from val import OS_NAME, MAC
-import util
+from pydriver.core import WebDriverFactory
+from pydriver.val import OS_NAME
+from pydriver import util
 
 logger = util.get_logger('edge')
 
@@ -17,7 +17,7 @@ class EdgeTest(unittest.TestCase):
         from msedge.selenium_tools import Edge, EdgeOptions
         options = EdgeOptions()
         options.use_chromium = True
-        options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')
+        options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
         self.driver1 = Edge(options=options)
         self.driver2 = Edge(options=options)
         self.driver1.maximize_window()

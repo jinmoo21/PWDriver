@@ -6,10 +6,11 @@ import zipfile
 
 from selenium import webdriver
 
-from val import CONFIG_NAME, CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, EDGE, EDGEDRIVER, \
-    EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, GECKODRIVER_NAME, IE, IEDRIVER, \
-    IEDRIVER_API, IEDRIVER_NAME, LOG, LOG_DIR, MAC, OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, WIN, X64, ZIP
-import util
+from pydriver.val import CONFIG_NAME, CONFIG_DIR, CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, \
+    DRIVER, EDGE, EDGEDRIVER, EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, \
+    GECKODRIVER_NAME, IE, IEDRIVER, IEDRIVER_API, IEDRIVER_NAME, INI, LOG, LOG_DIR, OS_BIT, OS_NAME, \
+    ROOT_DIR, SAFARI, TAR_GZ, ZIP
+from pydriver import util
 
 logger = util.get_logger('core')
 
@@ -18,7 +19,10 @@ class WebDriverFactory:
     def _set_config(self):
         import configparser as cp
         config = cp.ConfigParser()
-        config.read(os.path.join(ROOT_DIR, CONFIG_NAME))
+        config_path = util.get_absolute_path_of_file(INI)
+        if not os.path.isfile(config_path):
+            raise NotImplementedError(f'Not found \'.ini\' configuration file in directory.')
+        config.read(config_path)
         self._automation_browser = config.get('automation', 'automation.browser')
         if self._automation_browser not in [CHROME, GECKO, EDGE, IE, SAFARI]:
             raise NotImplementedError(f'Unsupported browser name: {self._automation_browser}')
@@ -29,7 +33,7 @@ class WebDriverFactory:
             self._automation_url = config.get('automation', 'automation.url')
 
     def _get_local_chrome_version(self):
-        if OS_NAME == WIN:
+        if OS_NAME == 'WIN':
             with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version') as stream:
                 version = re.split(r'\s+', stream.readlines()[2].strip())[2]
         else:
@@ -48,7 +52,7 @@ class WebDriverFactory:
         if not os.path.isfile(os.path.join(self._driver_path, CHROMEDRIVER_NAME)):
             logger.info('Not found executable chromedriver. Chromedriver will be downloaded.')
             self._download_url = f'{CHROMEDRIVER_API}/{version}/chromedriver_' \
-                                 + ('win32.zip' if OS_NAME == WIN else 'mac64.zip')
+                                 + ('win32.zip' if OS_NAME == 'WIN' else 'mac64.zip')
             file = requests.get(self._download_url, stream=True)
             file_name = f'{CHROMEDRIVER}{ZIP}'
             with open(file_name, 'wb') as fd:
@@ -78,15 +82,15 @@ class WebDriverFactory:
         if not os.path.isfile(os.path.join(self._driver_path, GECKODRIVER_NAME)):
             logger.info(f'Not found executable geckodriver. Geckodriver will be downloaded.')
             self._download_url = f'{GECKODRIVER_API}/download/{version}/geckodriver-{version}-' \
-                                 + (('win64.zip' if OS_BIT == X64 else 'win32.zip') if OS_NAME == WIN
+                                 + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip') if OS_NAME == 'WIN'
                                     else 'macos.tar.gz')
             file = requests.get(self._download_url, stream=True)
-            file_name = f'{GECKODRIVER}{ZIP}' if OS_NAME == WIN else f'{GECKODRIVER}{TAR_GZ}'
+            file_name = f'{GECKODRIVER}{ZIP}' if OS_NAME == 'WIN' else f'{GECKODRIVER}{TAR_GZ}'
             with open(file_name, 'wb') as fd:
                 logger.info(f'Downloading from {self._download_url}')
                 for chunk in file:
                     fd.write(chunk)
-            if OS_NAME == WIN:
+            if OS_NAME == 'WIN':
                 zipfile.ZipFile(file_name).extractall(self._driver_path)
             else:
                 tar = tarfile.open(file_name, 'r:gz')
@@ -106,7 +110,7 @@ class WebDriverFactory:
         os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(self._driver_path)}'
 
     def _get_local_edge_version(self):
-        if OS_NAME == WIN:
+        if OS_NAME == 'WIN':
             with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version') as stream:
                 version = re.split(r'\s+', stream.readlines()[2].strip())[2]
         else:
@@ -120,7 +124,7 @@ class WebDriverFactory:
         if not os.path.isfile(os.path.join(self._driver_path, EDGEDRIVER_NAME)):
             logger.info(f'Not found executable edgedriver. Edgedriver will be downloaded.')
             self._download_url = f'{EDGEDRIVER_API}/{version}/edgedriver_' \
-                                 + (('win64.zip' if OS_BIT == X64 else 'win32.zip') if OS_NAME == WIN else 'mac64.zip')
+                                 + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip') if OS_NAME == 'WIN' else 'mac64.zip')
             file = requests.get(self._download_url, stream=True)
             file_name = f'{EDGEDRIVER}{ZIP}'
             with open(file_name, 'wb') as fd:
@@ -193,22 +197,30 @@ class WebDriverFactory:
                                      service_log_path=os.path.join(ROOT_DIR, LOG_DIR, f'{GECKODRIVER}{LOG}'))
         if self._automation_browser == EDGE:
             self.setup_edgedriver()
-            edge_capabilities = DesiredCapabilities.EDGE.copy()
-            if options is not None:
-                edge_capabilities.update(options.to_capabilities())
-                if desired_capabilities is not None:
-                    edge_capabilities.update(desired_capabilities)
-            else:
-                if desired_capabilities is not None:
-                    edge_capabilities.update(desired_capabilities)
+            # edge_capabilities = DesiredCapabilities.EDGE.copy()
+            # if options is not None:
+            #     edge_capabilities.update(options.to_capabilities())
+            #     if desired_capabilities is not None:
+            #         edge_capabilities.update(desired_capabilities)
+            # else:
+            #     if desired_capabilities is not None:
+            #         edge_capabilities.update(desired_capabilities)
+            # from msedge.selenium_tools import Edge, EdgeOptions
+            # edge_options = EdgeOptions()
+            # edge_options.use_chromium = True
+            # edge_options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
+            # edge_capabilities.update(edge_options.to_capabilities())
+            # return Edge(desired_capabilities=edge_options.to_capabilities())
             from msedge.selenium_tools import Edge, EdgeOptions
-            edge_options = EdgeOptions()
+            if options is not None:
+                edge_options = options
+            else:
+                edge_options = EdgeOptions()
             edge_options.use_chromium = True
-            edge_options.set_capability('platform', 'MAC' if OS_NAME == MAC else 'WINDOWS')
-            edge_capabilities.update(edge_options.to_capabilities())
-            return Edge(desired_capabilities=edge_options.to_capabilities())
+            edge_options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
+            return Edge(options=edge_options)
         if self._automation_browser == IE:
-            if OS_NAME == MAC:
+            if OS_NAME == 'MAC':
                 raise NotImplementedError('Cannot launch IE browser on Mac.')
             self.setup_iedriver()
             ie_capabilities = DesiredCapabilities.INTERNETEXPLORER.copy()
@@ -228,7 +240,7 @@ class WebDriverFactory:
             ie_capabilities.update(ie_options.to_capabilities())
             return webdriver.Ie(desired_capabilities=ie_capabilities)
         if self._automation_browser == SAFARI:
-            if OS_NAME == WIN:
+            if OS_NAME == 'WIN':
                 raise NotImplementedError('Cannot launch safari browser on Windows.')
             return webdriver.Safari(desired_capabilities=desired_capabilities)
         remote_capabilities = DesiredCapabilities.CHROME.copy() if self._automation_browser == CHROME \

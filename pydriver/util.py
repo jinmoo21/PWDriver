@@ -1,5 +1,4 @@
 import os
-import re
 
 
 def parse_boolean(arg):
@@ -7,12 +6,20 @@ def parse_boolean(arg):
 
 
 def get_pattern_matched_file(path, regex):
+    import re
     file_list = []
     pattern = re.compile(regex)
     for file in os.listdir(path):
         if pattern.match(file):
             file_list.append(file)
     return file_list
+
+
+def get_absolute_path_of_file(name):
+    from pathlib import Path
+    from pydriver.val import ROOT_DIR
+    for path in Path(ROOT_DIR).rglob(name):
+        return os.path.abspath(path.name)
 
 
 def set_file_executable(path):
@@ -28,9 +35,8 @@ def get_logger(name=None):
     formatter = logging.Formatter('%(asctime)s %(levelname)-5s [%(name)s] '
                                   '%(funcName)s(%(pathname)s:%(lineno)d): %(message)s')
     console = logging.StreamHandler()
-    from val import LOG_DIR
-    from val import LOG_NAME
-    from val import ROOT_DIR
+    from pydriver.val import LOG_DIR, LOG_NAME, ROOT_DIR
+    print(ROOT_DIR)
     if not os.path.exists(os.path.join(ROOT_DIR, LOG_DIR)):
         os.makedirs(os.path.join(ROOT_DIR, LOG_DIR))
     file_handler = logging.FileHandler(os.path.join(ROOT_DIR, LOG_DIR, LOG_NAME))

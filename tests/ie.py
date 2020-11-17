@@ -6,15 +6,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from core import WebDriverFactory
-import util
+from pydriver import util
+from pydriver.core import WebDriverFactory
+from pydriver.val import OS_NAME, MAC
 
 logger = util.get_logger('ie')
 
 
+@unittest.skipIf(OS_NAME == MAC, 'Cannot run on Mac.')
 class IeTest(unittest.TestCase):
     def setUp(self):
-
         WebDriverFactory().setup_iedriver()
         options = IeOptions()
         options.ignore_protected_mode_settings = True

@@ -5,9 +5,9 @@ from selenium.webdriver.support.events import EventFiringWebDriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from core import WebDriverFactory
-from listener import EventListener
-from util import get_logger
+from pydriver.core import WebDriverFactory
+from pydriver.listener import EventListener
+from pydriver.util import get_logger
 
 
 logger = get_logger('eventdriver')
