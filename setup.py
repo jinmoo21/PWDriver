@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='pwdriver',
-    version='0.1.1',
+    version='0.1.2',
     license='MIT',
     author='Jinmoo Han',
     author_email='jinmoo21@naver.com',
