@@ -11,7 +11,7 @@ from pydriver.val import OS_NAME
 logger = util.get_logger('safari')
 
 
-@unittest.skipIf(OS_NAME == WIN, 'Cannot run on Windows.')
+@unittest.skipIf(OS_NAME == 'WIN', 'Cannot run on Windows.')
 class SafariTest(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Safari()

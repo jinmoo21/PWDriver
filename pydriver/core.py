@@ -6,10 +6,9 @@ import zipfile
 
 from selenium import webdriver
 
-from pydriver.val import CONFIG_NAME, CONFIG_DIR, CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, \
-    DRIVER, EDGE, EDGEDRIVER, EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, \
-    GECKODRIVER_NAME, IE, IEDRIVER, IEDRIVER_API, IEDRIVER_NAME, INI, LOG, LOG_DIR, OS_BIT, OS_NAME, \
-    ROOT_DIR, SAFARI, TAR_GZ, ZIP
+from pydriver.val import CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, EDGE, EDGEDRIVER, \
+    EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, GECKODRIVER_NAME, IE, IEDRIVER, \
+    IEDRIVER_API, IEDRIVER_NAME, INI, LOG, LOG_DIR, OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP
 from pydriver import util
 
 logger = util.get_logger('core')
@@ -19,7 +18,7 @@ class WebDriverFactory:
     def _set_config(self):
         import configparser as cp
         config = cp.ConfigParser()
-        config_path = util.get_absolute_path_of_file(INI)
+        config_path = util.get_absolute_path_of_file('*.ini')
         if not os.path.isfile(config_path):
             raise NotImplementedError(f'Not found \'.ini\' configuration file in directory.')
         config.read(config_path)
@@ -124,7 +123,8 @@ class WebDriverFactory:
         if not os.path.isfile(os.path.join(self._driver_path, EDGEDRIVER_NAME)):
             logger.info(f'Not found executable edgedriver. Edgedriver will be downloaded.')
             self._download_url = f'{EDGEDRIVER_API}/{version}/edgedriver_' \
-                                 + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip') if OS_NAME == 'WIN' else 'mac64.zip')
+                                 + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip')
+                                    if OS_NAME == 'WIN' else 'mac64.zip')
             file = requests.get(self._download_url, stream=True)
             file_name = f'{EDGEDRIVER}{ZIP}'
             with open(file_name, 'wb') as fd:

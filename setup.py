@@ -12,7 +12,7 @@ setuptools.setup(
     description='It will download a WebDriver, and then set basic configuration automatically.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/jinmoo21/',
+    url='https://github.com/jinmoo21/PyDriver',
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

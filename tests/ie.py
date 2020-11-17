@@ -8,12 +8,12 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from pydriver import util
 from pydriver.core import WebDriverFactory
-from pydriver.val import OS_NAME, MAC
+from pydriver.val import OS_NAME
 
 logger = util.get_logger('ie')
 
 
-@unittest.skipIf(OS_NAME == MAC, 'Cannot run on Mac.')
+@unittest.skipIf(OS_NAME == 'MAC', 'Cannot run on Mac.')
 class IeTest(unittest.TestCase):
     def setUp(self):
         WebDriverFactory().setup_iedriver()
