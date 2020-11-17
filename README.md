@@ -34,7 +34,7 @@ webdriver.Chrome('YOUR_CHROMEDRIVER_PATH')
 ### 1. Install:
 
 ```bash
-pip install pydriver
+pip install pwdriver
 ```
 
 ### 2. Make 'config.ini' file and locate in anywhere.
