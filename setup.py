@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='pwdriver',
-    version='0.1.2',
+    version='0.1.3',
     license='MIT',
     author='Jinmoo Han',
     author_email='jinmoo21@naver.com',
@@ -20,9 +20,9 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',
-    install_reqires=[
-        'selenium==4.0.0a6.post2',
+    install_requires=[
+        'requests>=2.25.0'
+        'selenium>=3.141.0',
         'msedge-selenium-tools==3.141.2',
-        'requests>=2.24.0'
     ]
 )
