@@ -36,7 +36,6 @@ def get_logger(name=None):
                                   '%(funcName)s(%(pathname)s:%(lineno)d): %(message)s')
     console = logging.StreamHandler()
     from pwdriver.val import LOG_DIR, LOG_NAME, ROOT_DIR
-    print(ROOT_DIR)
     if not os.path.exists(os.path.join(ROOT_DIR, LOG_DIR)):
         os.makedirs(os.path.join(ROOT_DIR, LOG_DIR))
     file_handler = logging.FileHandler(os.path.join(ROOT_DIR, LOG_DIR, LOG_NAME))
