@@ -21,8 +21,12 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'requests>=2.25.0'
+        'certifi>=2020.11.8',
+        'chardet>=3.0.4',
+        'idna>=2.10',
+        'msedge-selenium-tools>=3.141.2',
+        'requests>=2.25.0',
         'selenium>=3.141.0',
-        'msedge-selenium-tools==3.141.2',
+        'urllib3>=1.26.2'
     ]
 )
