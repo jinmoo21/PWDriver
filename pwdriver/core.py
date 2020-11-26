@@ -197,28 +197,21 @@ class WebDriverFactory:
                                      service_log_path=os.path.join(ROOT_DIR, LOG_DIR, f'{GECKODRIVER}{LOG}'))
         if self._automation_browser == EDGE:
             self.setup_edgedriver()
-            # edge_capabilities = DesiredCapabilities.EDGE.copy()
-            # if options is not None:
-            #     edge_capabilities.update(options.to_capabilities())
-            #     if desired_capabilities is not None:
-            #         edge_capabilities.update(desired_capabilities)
-            # else:
-            #     if desired_capabilities is not None:
-            #         edge_capabilities.update(desired_capabilities)
-            # from msedge.selenium_tools import Edge, EdgeOptions
-            # edge_options = EdgeOptions()
-            # edge_options.use_chromium = True
-            # edge_options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
-            # edge_capabilities.update(edge_options.to_capabilities())
-            # return Edge(desired_capabilities=edge_options.to_capabilities())
             from msedge.selenium_tools import Edge, EdgeOptions
+            edge_capabilities = DesiredCapabilities.EDGE.copy()
             if options is not None:
-                edge_options = options
+                edge_capabilities.update(options.to_capabilities())
+                if desired_capabilities is not None:
+                    edge_capabilities.update(desired_capabilities)
             else:
-                edge_options = EdgeOptions()
+                if desired_capabilities is not None:
+                    edge_capabilities.update(desired_capabilities)
+            from msedge.selenium_tools import Edge, EdgeOptions
+            edge_options = EdgeOptions()
             edge_options.use_chromium = True
             edge_options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
-            return Edge(options=edge_options)
+            edge_capabilities.update(edge_options.to_capabilities())
+            return Edge(desired_capabilities=edge_options.to_capabilities())
         if self._automation_browser == IE:
             if OS_NAME == 'MAC':
                 raise NotImplementedError('Cannot launch IE browser on Mac.')
