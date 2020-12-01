@@ -37,7 +37,7 @@ webdriver.Chrome('YOUR_CHROMEDRIVER_PATH')
 pip install pwdriver
 ```
 
-### 2. Make 'config.ini' file and locate in anywhere.
+### 2. Make 'config.ini' file and locate in your project directory.
 
 config.ini 's contents be like this.
 
@@ -70,7 +70,7 @@ Use with Chrome:
 from selenium import webdriver
 from pwdriver.core import WebDriverFactory
 
-WebDriverFactory.setup_chromedriver()
+WebDriverFactory().setup_chromedriver()
 driver = webdriver.Chrome()
 ```
 
@@ -80,7 +80,7 @@ Use with FireFox:
 from selenium import webdriver
 from pwdriver.core import WebDriverFactory
 
-WebDriverFactory.setup_geckodriver()
+WebDriverFactory().setup_geckodriver()
 driver = webdriver.firefox()
 ```
 
@@ -91,7 +91,7 @@ Use with Edge
 from msedge.selenium_tools import Edge, EdgeOptions
 from pwdriver.core import WebDriverFactory
 
-WebDriverFactory.setup_edgedriver()
+WebDriverFactory().setup_edgedriver()
 options = EdgeOptions()
 options.use_chromium = True
 driver = Edge(options=options)
@@ -104,6 +104,6 @@ Use with IE
 from selenium import webdriver
 from pwdriver.core import WebDriverFactory
 
-WebDriverFactory.setup_iedriver()
+WebDriverFactory().setup_iedriver()
 driver = webdriver.Ie()
 ```
