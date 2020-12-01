@@ -15,13 +15,6 @@ def get_pattern_matched_file(path, regex):
     return file_list
 
 
-def get_absolute_path_of_file(name):
-    from pathlib import Path
-    from pwdriver.val import ROOT_DIR
-    for path in Path(ROOT_DIR).rglob(name):
-        return os.path.abspath(path.name)
-
-
 def set_file_executable(path):
     if os.path.isfile(path) and not os.access(path, os.X_OK):
         import stat

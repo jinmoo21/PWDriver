@@ -6,9 +6,9 @@ import zipfile
 
 from selenium import webdriver
 
-from pwdriver.val import CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, EDGE, EDGEDRIVER, \
-    EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, GECKODRIVER_NAME, IE, IEDRIVER, \
-    IEDRIVER_API, IEDRIVER_NAME, INI, LOG, LOG_DIR, OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP
+from pwdriver.val import CONFIG_NAME, CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, \
+    EDGE, EDGEDRIVER, EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, GECKODRIVER_NAME, \
+    IE, IEDRIVER, IEDRIVER_API, IEDRIVER_NAME, INI, LOG, LOG_DIR, OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP
 from pwdriver import util
 
 logger = util.get_logger('core')
@@ -18,7 +18,8 @@ class WebDriverFactory:
     def _set_config(self):
         import configparser as cp
         config = cp.ConfigParser()
-        config_path = util.get_absolute_path_of_file('*.ini')
+        import glob
+        config_path = glob.glob(os.path.join(ROOT_DIR, '**', CONFIG_NAME), recursive=True)[0]
         if not os.path.isfile(config_path):
             raise NotImplementedError(f'Not found \'.ini\' configuration file in directory.')
         config.read(config_path)

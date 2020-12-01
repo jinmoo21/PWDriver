@@ -1,5 +1,5 @@
-import os
 import platform
+import sys
 
 OS_NAME = 'WIN' if platform.system() == 'Windows' else 'MAC'
 OS_BIT = platform.architecture()[0]
@@ -8,10 +8,9 @@ INI = '.ini'
 LOG = '.log'
 ZIP = '.zip'
 TAR_GZ = '.tar.gz'
-ROOT_DIR = os.path.dirname(os.path.abspath(f'{__file__}{os.path.sep}..'))
-CONFIG_DIR = 'pwdriver'
+ROOT_DIR = sys.path[1]
 CONFIG_NAME = f'config{INI}'
-LOG_DIR = '../logs'
+LOG_DIR = 'logs'
 LOG_NAME = f'output{LOG}'
 CHROMEDRIVER_API = 'https://chromedriver.storage.googleapis.com'
 DRIVER = 'driver'
