@@ -15,20 +15,6 @@ To simplify automation settings of each different version, and browser.
 
 - IEDriver
 
-##### Before:
-
-- You have to check your local browser's version
-
-- You have to download driver on each website
-
-- You have to set path to this driver like this:
-
-```python
-from selenium import webdriver
-
-webdriver.Chrome('YOUR_CHROMEDRIVER_PATH')
-```
-
 ## Usage
 
 ### 1. Install:
@@ -52,9 +38,7 @@ automation.url=http://localhost:4444/wd/hub
 
 ### 3. Import WebDriverFactory.
 
-Now, we could launch webdriver.
-
-'automation.browser' you set will be created.   
+Now, we could launch webdriver.   
 
 ```python
 from pwdriver.core import WebDriverFactory
