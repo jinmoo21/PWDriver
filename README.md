@@ -81,24 +81,22 @@ from selenium import webdriver
 from pwdriver.core import WebDriverFactory
 
 WebDriverFactory().setup_geckodriver()
-driver = webdriver.firefox()
+driver = webdriver.Firefox()
 ```
 
-Use with Edge
+Use with Edge:
 
 ```python
 
-from msedge.selenium_tools import Edge, EdgeOptions
+from selenium import webdriver
 from pwdriver.core import WebDriverFactory
 
 WebDriverFactory().setup_edgedriver()
-options = EdgeOptions()
-options.use_chromium = True
-driver = Edge(options=options)
+driver = webdriver.Edge()
 ```
 
 
-Use with IE
+Use with IE:
 
 ```python
 from selenium import webdriver
