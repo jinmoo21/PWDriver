@@ -1,14 +1,16 @@
 import os
 import re
+
 import requests
 import tarfile
 import zipfile
 
 from selenium import webdriver
+from selenium.common.exceptions import SessionNotCreatedException
 
 from pwdriver.val import CONFIG_NAME, CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, \
     EDGE, EDGEDRIVER, EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, GECKODRIVER_NAME, \
-    IE, IEDRIVER, IEDRIVER_API, IEDRIVER_NAME, INI, LOG, LOG_DIR, OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP
+    IE, IEDRIVER, IEDRIVER_API, IEDRIVER_NAME, LOG, LOG_DIR, OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP
 from pwdriver import util
 
 logger = util.get_logger('core')
@@ -173,77 +175,83 @@ class WebDriverFactory:
     def launch(self, desired_capabilities=None, options=None):
         from selenium.webdriver import DesiredCapabilities
         self._set_config()
-        if self._automation_browser == CHROME and self._automation_local:
-            self.setup_chromedriver()
-            chrome_capabilities = DesiredCapabilities.CHROME.copy()
+        try:
+            if self._automation_browser == CHROME and self._automation_local:
+                self.setup_chromedriver()
+                chrome_capabilities = DesiredCapabilities.CHROME.copy()
+                if options is not None:
+                    chrome_capabilities.update(options.to_capabilities())
+                    if desired_capabilities is not None:
+                        chrome_capabilities.update(desired_capabilities)
+                else:
+                    if desired_capabilities is not None:
+                        chrome_capabilities.update(desired_capabilities)
+                return webdriver.Chrome(desired_capabilities=chrome_capabilities)
+            if self._automation_browser == GECKO and self._automation_local:
+                self.setup_geckodriver()
+                firefox_capabilities = DesiredCapabilities.FIREFOX.copy()
+                if options is not None:
+                    firefox_capabilities.update(options.to_capabilities())
+                    if desired_capabilities is not None:
+                        firefox_capabilities.update(desired_capabilities)
+                else:
+                    if desired_capabilities is not None:
+                        firefox_capabilities.update(desired_capabilities)
+                return webdriver.Firefox(desired_capabilities=firefox_capabilities,
+                                         service_log_path=os.path.join(ROOT_DIR, LOG_DIR, f'{GECKODRIVER}{LOG}'))
+            if self._automation_browser == EDGE:
+                self.setup_edgedriver()
+                # from msedge.selenium_tools import Edge, EdgeOptions
+                edge_capabilities = DesiredCapabilities.EDGE.copy()
+                if options is not None:
+                    edge_capabilities.update(options.to_capabilities())
+                    if desired_capabilities is not None:
+                        edge_capabilities.update(desired_capabilities)
+                else:
+                    if desired_capabilities is not None:
+                        edge_capabilities.update(desired_capabilities)
+                # from msedge.selenium_tools import Edge, EdgeOptions
+                # edge_options = EdgeOptions()
+                # edge_options.use_chromium = True
+                # edge_options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
+                # edge_capabilities.update(edge_options.to_capabilities())
+                # return Edge(desired_capabilities=edge_options.to_capabilities())
+                return webdriver.Edge(desired_capabilities=edge_capabilities)
+            if self._automation_browser == IE:
+                if OS_NAME == 'MAC':
+                    raise NotImplementedError('Cannot launch IE browser on Mac.')
+                self.setup_iedriver()
+                ie_capabilities = DesiredCapabilities.INTERNETEXPLORER.copy()
+                if options is not None:
+                    ie_capabilities.update(options.to_capabilities())
+                    if desired_capabilities is not None:
+                        ie_capabilities.update(desired_capabilities)
+                else:
+                    if desired_capabilities is not None:
+                        ie_capabilities.update(desired_capabilities)
+                from selenium.webdriver import IeOptions
+                ie_options = IeOptions()
+                ie_options.ignore_protected_mode_settings = True
+                ie_options.ensure_clean_session = True
+                ie_options.require_window_focus = True
+                ie_options.ignore_zoom_level = True
+                ie_capabilities.update(ie_options.to_capabilities())
+                return webdriver.Ie(desired_capabilities=ie_capabilities)
+            if self._automation_browser == SAFARI:
+                if OS_NAME == 'WIN':
+                    raise NotImplementedError('Cannot launch safari browser on Windows.')
+                return webdriver.Safari(desired_capabilities=desired_capabilities)
+            remote_capabilities = DesiredCapabilities.CHROME.copy() if self._automation_browser == CHROME \
+                else DesiredCapabilities.FIREFOX.copy()
             if options is not None:
-                chrome_capabilities.update(options.to_capabilities())
+                remote_capabilities.update(options.to_capabilities())
                 if desired_capabilities is not None:
-                    chrome_capabilities.update(desired_capabilities)
+                    remote_capabilities.update(desired_capabilities)
             else:
                 if desired_capabilities is not None:
-                    chrome_capabilities.update(desired_capabilities)
-            return webdriver.Chrome(desired_capabilities=chrome_capabilities)
-        if self._automation_browser == GECKO and self._automation_local:
-            self.setup_geckodriver()
-            firefox_capabilities = DesiredCapabilities.FIREFOX.copy()
-            if options is not None:
-                firefox_capabilities.update(options.to_capabilities())
-                if desired_capabilities is not None:
-                    firefox_capabilities.update(desired_capabilities)
-            else:
-                if desired_capabilities is not None:
-                    firefox_capabilities.update(desired_capabilities)
-            return webdriver.Firefox(desired_capabilities=firefox_capabilities,
-                                     service_log_path=os.path.join(ROOT_DIR, LOG_DIR, f'{GECKODRIVER}{LOG}'))
-        if self._automation_browser == EDGE:
-            self.setup_edgedriver()
-            from msedge.selenium_tools import Edge, EdgeOptions
-            edge_capabilities = DesiredCapabilities.EDGE.copy()
-            if options is not None:
-                edge_capabilities.update(options.to_capabilities())
-                if desired_capabilities is not None:
-                    edge_capabilities.update(desired_capabilities)
-            else:
-                if desired_capabilities is not None:
-                    edge_capabilities.update(desired_capabilities)
-            from msedge.selenium_tools import Edge, EdgeOptions
-            edge_options = EdgeOptions()
-            edge_options.use_chromium = True
-            edge_options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
-            edge_capabilities.update(edge_options.to_capabilities())
-            return Edge(desired_capabilities=edge_options.to_capabilities())
-        if self._automation_browser == IE:
-            if OS_NAME == 'MAC':
-                raise NotImplementedError('Cannot launch IE browser on Mac.')
-            self.setup_iedriver()
-            ie_capabilities = DesiredCapabilities.INTERNETEXPLORER.copy()
-            if options is not None:
-                ie_capabilities.update(options.to_capabilities())
-                if desired_capabilities is not None:
-                    ie_capabilities.update(desired_capabilities)
-            else:
-                if desired_capabilities is not None:
-                    ie_capabilities.update(desired_capabilities)
-            from selenium.webdriver import IeOptions
-            ie_options = IeOptions()
-            ie_options.ignore_protected_mode_settings = True
-            ie_options.ensure_clean_session = True
-            ie_options.require_window_focus = True
-            ie_options.ignore_zoom_level = True
-            ie_capabilities.update(ie_options.to_capabilities())
-            return webdriver.Ie(desired_capabilities=ie_capabilities)
-        if self._automation_browser == SAFARI:
-            if OS_NAME == 'WIN':
-                raise NotImplementedError('Cannot launch safari browser on Windows.')
-            return webdriver.Safari(desired_capabilities=desired_capabilities)
-        remote_capabilities = DesiredCapabilities.CHROME.copy() if self._automation_browser == CHROME \
-            else DesiredCapabilities.FIREFOX.copy()
-        if options is not None:
-            remote_capabilities.update(options.to_capabilities())
-            if desired_capabilities is not None:
-                remote_capabilities.update(desired_capabilities)
-        else:
-            if desired_capabilities is not None:
-                remote_capabilities.update(desired_capabilities)
-        return webdriver.Remote(command_executor=self._automation_url, desired_capabilities=remote_capabilities)
+                    remote_capabilities.update(desired_capabilities)
+            return webdriver.Remote(command_executor=self._automation_url, desired_capabilities=remote_capabilities)
+        except SessionNotCreatedException as e:
+            if e.msg.find('unable to find binary in default location'):
+                raise NotImplementedError(f'Browser not installed: {self._automation_browser}')
+            logger.error(e.msg)

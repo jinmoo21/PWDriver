@@ -1,11 +1,12 @@
 import unittest
 
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from pwdriver.core import WebDriverFactory
-from pwdriver.val import OS_NAME
+# from pwdriver.val import OS_NAME
 from pwdriver import util
 
 logger = util.get_logger('edge')
@@ -14,12 +15,14 @@ logger = util.get_logger('edge')
 class EdgeTest(unittest.TestCase):
     def setUp(self):
         WebDriverFactory().setup_edgedriver()
-        from msedge.selenium_tools import Edge, EdgeOptions
-        options = EdgeOptions()
-        options.use_chromium = True
-        options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
-        self.driver1 = Edge(options=options)
-        self.driver2 = Edge(options=options)
+        # from msedge.selenium_tools import Edge, EdgeOptions
+        # options = EdgeOptions()
+        # options.use_chromium = True
+        # options.set_capability('platform', 'MAC' if OS_NAME == 'MAC' else 'WINDOWS')
+        # self.driver1 = Edge(options=options)
+        # self.driver2 = Edge(options=options)
+        self.driver1 = webdriver.Edge()
+        self.driver2 = webdriver.Edge()
         self.driver1.maximize_window()
         self.wait1 = WebDriverWait(self.driver1, 5)
         self.wait2 = WebDriverWait(self.driver2, 5)
