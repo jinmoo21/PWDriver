@@ -8,12 +8,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from pwdriver import util
 from pwdriver.core import WebDriverFactory
-from pwdriver.val import OS_NAME
 
 logger = util.get_logger('ie')
 
 
-@unittest.skipIf(OS_NAME == 'MAC', 'Cannot run on Mac.')
+@unittest.skip('Internet Explorer 11 End Of Life')
 class IeTest(unittest.TestCase):
     def setUp(self):
         WebDriverFactory().setup_iedriver()
