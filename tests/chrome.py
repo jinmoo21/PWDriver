@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from pwdriver.core import WebDriverFactory
+from pwdriver import core
 from pwdriver import util
 
 logger = util.get_logger('chrome')
@@ -13,7 +13,7 @@ logger = util.get_logger('chrome')
 
 class ChromeTest(unittest.TestCase):
     def setUp(self):
-        WebDriverFactory().setup_chromedriver()
+        core.setup_chromedriver()
         self.driver1 = webdriver.Chrome()
         self.driver2 = webdriver.Chrome()
         self.driver1.maximize_window()

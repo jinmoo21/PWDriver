@@ -13,7 +13,7 @@ To simplify automation settings of each different version, and browser.
 
 - EdgeDriver (Chromium)
 
-- IEDriver
+- ~~IEDriver~~
 
 ## Usage
 
@@ -29,7 +29,7 @@ config.ini 's contents be like this.
 
 ```ini
 [automation]
-;automation.browser: chrome, gecko, edge, ie, safari
+;automation.browser: chrome, gecko, edge, safari
 automation.browser=chrome
 ;automation.local: true, false
 automation.local=true
@@ -52,9 +52,9 @@ Use with Chrome:
 
 ```python
 from selenium import webdriver
-from pwdriver.core import WebDriverFactory
+from pwdriver import core
 
-WebDriverFactory().setup_chromedriver()
+core.setup_chromedriver()
 driver = webdriver.Chrome()
 ```
 
@@ -62,9 +62,9 @@ Use with FireFox:
 
 ```python
 from selenium import webdriver
-from pwdriver.core import WebDriverFactory
+from pwdriver import core
 
-WebDriverFactory().setup_geckodriver()
+core.setup_geckodriver()
 driver = webdriver.Firefox()
 ```
 
@@ -73,19 +73,8 @@ Use with Edge:
 ```python
 
 from selenium import webdriver
-from pwdriver.core import WebDriverFactory
+from pwdriver import core
 
-WebDriverFactory().setup_edgedriver()
+core.setup_edgedriver()
 driver = webdriver.Edge()
-```
-
-
-Use with IE:
-
-```python
-from selenium import webdriver
-from pwdriver.core import WebDriverFactory
-
-WebDriverFactory().setup_iedriver()
-driver = webdriver.Ie()
 ```

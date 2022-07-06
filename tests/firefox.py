@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from pwdriver.core import WebDriverFactory
+from pwdriver import core
 from pwdriver import util
 
 logger = util.get_logger('firefox')
@@ -13,7 +13,7 @@ logger = util.get_logger('firefox')
 
 class FirefoxTest(unittest.TestCase):
     def setUp(self):
-        WebDriverFactory().setup_geckodriver()
+        core.setup_geckodriver()
         self.driver1 = webdriver.Firefox()
         self.driver2 = webdriver.Firefox()
         self.driver1.maximize_window()

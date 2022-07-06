@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from pwdriver.core import WebDriverFactory
+from pwdriver import core
 from pwdriver import util
 
 logger = util.get_logger('edge')
@@ -13,7 +13,7 @@ logger = util.get_logger('edge')
 
 class EdgeTest(unittest.TestCase):
     def setUp(self):
-        WebDriverFactory().setup_edgedriver()
+        core.setup_edgedriver()
         self.driver1 = webdriver.Edge()
         self.driver2 = webdriver.Edge()
         self.driver1.maximize_window()
