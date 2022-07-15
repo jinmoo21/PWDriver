@@ -20,7 +20,6 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
       - uses: nanasess/setup-chromedriver@v1.0.7
-      - run: chrome --version
       - name: Test with unittest
         run: |
           pip install pwdriver
