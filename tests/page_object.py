@@ -1,7 +1,5 @@
-from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
-from pages.bing_page import BingPage
-from pwdriver.core import WebDriverFactory
-from pwdriver.listener import EventListener
+from pwdriver import core
+from tests.pages.bing_page import BingPage
 
 import unittest
 
@@ -15,7 +13,8 @@ class BrowserTest(unittest.TestCase):
         options.add_argument('window-size=1920x1080')
         options.add_argument("disable-gpu")
         options.add_argument("--no-sandbox")
-        self.driver = EventFiringWebDriver(WebDriverFactory().launch(options=options), EventListener())
+        core.setup_chromedriver()
+        self.driver = webdriver.Chrome(options=options)
 
     def tearDown(self):
         self.driver.quit()
@@ -27,3 +26,7 @@ class BrowserTest(unittest.TestCase):
         page.click_search()
         self.assertIn("https://www.bing.com/search?q=%EC%B9%98%ED%82%A8", self.driver.current_url)
         self.assertEqual("치킨 - Search", self.driver.title)
+
+
+if __name__ == '__main__':
+    unittest.main()
