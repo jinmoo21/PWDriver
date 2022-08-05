@@ -28,4 +28,4 @@ jobs:
       - name: Prepare chromedriver
         run: chromedriver --url-base=/wd/hub &
       - name: Test with unittest
-        run: python -m unittest tests/page_object.py
+        run: python -m unittest tests/chrome.py
