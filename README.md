@@ -1,6 +1,9 @@
 PWDriver (PyWebDriver)
 ======================
 
+[![test-bot](https://github.com/jinmoo21/pwdriver/actions/workflows/python_test.yml/badge.svg)](https://github.com/jinmoo21/pwdriver/actions/workflows/python_test.yml)
+[![release-bot](https://github.com/jinmoo21/pwdriver/actions/workflows/python_release.yml/badge.svg)](https://github.com/jinmoo21/pwdriver/actions/workflows/python_release.yml)
+
 ## Motivation
 
 To simplify automation settings of each different version, and browser.
