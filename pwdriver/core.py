@@ -19,8 +19,13 @@ driver_path = os.path.join(ROOT_DIR, DRIVER)
 
 def _get_local_chrome_version():
     if OS_NAME == 'WIN':
-        with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version') as stream:
-            version = re.split(r'\s+', stream.readlines()[2].strip())[2]
+        with os.popen(r'wmic datafile where name="C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" get '
+                      r'version /value') as stream:
+            version = stream.read().strip().strip('Version=')
+        if not version:
+            with os.popen(r'wmic datafile where name="C:\\Program Files ('
+                          r'x86)\\Google\\Chrome\\Application\\chrome.exe" get version /value') as stream:
+                version = stream.read().strip().strip('Version=')
     elif OS_NAME == 'MAC':
         with os.popen(r'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version') as stream:
             version = stream.read().strip('Google Chrome ').strip()
@@ -114,8 +119,13 @@ def setup_geckodriver():
 
 def _get_local_edge_version():
     if OS_NAME == 'WIN':
-        with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version') as stream:
-            version = re.split(r'\s+', stream.readlines()[2].strip())[2]
+        with os.popen(r'wmic datafile where name="C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe" get '
+                      r'version /value') as stream:
+            version = stream.read().strip().strip('Version=')
+        if not version:
+            with os.popen(r'wmic datafile where name="C:\\Program Files ('
+                          r'x86)\\Microsoft\\Edge\\Application\\msedge.exe" get version /value') as stream:
+                version = stream.read().strip().strip('Version=')
     elif OS_NAME == 'MAC':
         with os.popen(r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version') as stream:
             version = stream.read().strip('Microsoft Edge ').strip()
