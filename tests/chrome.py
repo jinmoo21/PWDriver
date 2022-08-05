@@ -14,8 +14,15 @@ logger = util.get_logger('chrome')
 class ChromeTest(unittest.TestCase):
     def setUp(self):
         core.setup_chromedriver()
-        self.driver1 = webdriver.Chrome()
-        self.driver2 = webdriver.Chrome()
+        from selenium import webdriver
+        options = webdriver.ChromeOptions()
+        options.add_argument("start-maximized")
+        options.add_argument('headless')
+        options.add_argument('window-size=1920x1080')
+        options.add_argument("disable-gpu")
+        options.add_argument("--no-sandbox")
+        self.driver1 = webdriver.Chrome(options=options)
+        self.driver2 = webdriver.Chrome(options=options)
         self.driver1.maximize_window()
         self.wait1 = WebDriverWait(self.driver1, 5)
         self.wait2 = WebDriverWait(self.driver2, 5)
