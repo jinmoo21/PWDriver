@@ -1,4 +1,5 @@
 from pwdriver import core
+from selenium import webdriver
 from tests.pages.bing_page import BingPage
 
 import unittest
@@ -6,15 +7,8 @@ import unittest
 
 class BrowserTest(unittest.TestCase):
     def setUp(self):
-        from selenium import webdriver
-        options = webdriver.ChromeOptions()
-        options.add_argument("start-maximized")
-        options.add_argument('headless')
-        options.add_argument('window-size=1920x1080')
-        options.add_argument("disable-gpu")
-        options.add_argument("--no-sandbox")
         core.setup_chromedriver()
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome()
 
     def tearDown(self):
         self.driver.quit()
