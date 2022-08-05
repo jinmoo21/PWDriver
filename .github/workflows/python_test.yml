@@ -1,8 +1,7 @@
 name: test-bot
 on:
-  pull_request:
+  push:
     branches:
-      - master
       - 'releases/**'
 jobs:
   test:
@@ -26,6 +25,7 @@ jobs:
           pip install -r requirements.txt
       - name: Install chromedriver
         uses: nanasess/setup-chromedriver@v1.0.7
+      - name: Prepare chromedriver
         run: chromedriver --url-base=/wd/hub &
       - name: Test with unittest
         run: python -m unittest tests/page_object.py
