@@ -20,6 +20,7 @@ driver_path = os.path.join(ROOT_DIR, DRIVER)
 def _get_local_chrome_version():
     if OS_NAME == 'WIN':
         with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version') as stream:
+            logger.info(stream.readlines())
             version = re.split(r'\s+', stream.readlines()[2].strip())[2]
     elif OS_NAME == 'MAC':
         with os.popen(r'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version') as stream:
