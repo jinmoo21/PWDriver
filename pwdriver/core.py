@@ -21,8 +21,11 @@ def _get_local_chrome_version():
     if OS_NAME == 'WIN':
         with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version') as stream:
             version = re.split(r'\s+', stream.readlines()[2].strip())[2]
-    else:
+    elif OS_NAME == 'MAC':
         with os.popen(r'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version') as stream:
+            version = stream.read().strip('Google Chrome ').strip()
+    else:
+        with os.popen(r'google-chrome --version') as stream:
             version = stream.read().strip('Google Chrome ').strip()
     logger.info(f'Installed Chrome Browser version: {version}')
     return version
@@ -42,7 +45,7 @@ def _download_chromedriver(version):
     if not os.path.isfile(os.path.join(driver_path, CHROMEDRIVER_NAME)):
         logger.info('Not found executable chromedriver. Chromedriver will be downloaded.')
         download_url = f'{CHROMEDRIVER_API}/{version}/chromedriver_' \
-                       + ('win32.zip' if OS_NAME == 'WIN' else 'mac64.zip')
+                       + ('win32.zip' if OS_NAME == 'WIN' else 'mac64.zip' if OS_NAME == 'MAC' else 'linux64.zip')
         file = requests.get(download_url, stream=True)
         file_name = f'{CHROMEDRIVER}{ZIP}'
         with open(file_name, 'wb') as fd:
@@ -80,7 +83,7 @@ def _download_geckodriver(version):
         logger.info(f'Not found executable geckodriver. Geckodriver will be downloaded.')
         download_url = f'{GECKODRIVER_API}/download/{version}/geckodriver-{version}-' \
                        + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip') if OS_NAME == 'WIN'
-                          else 'macos.tar.gz')
+                          else 'macos.tar.gz' if OS_NAME == 'MAC' else 'linux32.tar.gz')
         file = requests.get(download_url, stream=True)
         file_name = f'{GECKODRIVER}{ZIP}' if OS_NAME == 'WIN' else f'{GECKODRIVER}{TAR_GZ}'
         with open(file_name, 'wb') as fd:
@@ -113,8 +116,11 @@ def _get_local_edge_version():
     if OS_NAME == 'WIN':
         with os.popen(r'reg query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version') as stream:
             version = re.split(r'\s+', stream.readlines()[2].strip())[2]
-    else:
+    elif OS_NAME == 'MAC':
         with os.popen(r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version') as stream:
+            version = stream.read().strip('Microsoft Edge ').strip()
+    else:
+        with os.popen(r'microsoft-edge --version') as stream:
             version = stream.read().strip('Microsoft Edge ').strip()
     logger.info(f'Installed Edge Browser version: {version}')
     return version
@@ -128,7 +134,7 @@ def _download_edgedriver(version):
         logger.info(f'Not found executable edgedriver. Edgedriver will be downloaded.')
         download_url = f'{EDGEDRIVER_API}/{version}/edgedriver_' \
                        + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip')
-                          if OS_NAME == 'WIN' else 'mac64.zip')
+                          if OS_NAME == 'WIN' else 'mac64.zip' if OS_NAME == 'MAC' else 'linux64.zip')
         file = requests.get(download_url, stream=True)
         file_name = f'{EDGEDRIVER}{ZIP}'
         with open(file_name, 'wb') as fd:
