@@ -15,8 +15,15 @@ logger = get_logger('eventdriver')
 
 class EventDriverTest(unittest.TestCase):
     def setUp(self):
-        core1 = WebDriverFactory().launch()
-        core2 = WebDriverFactory().launch()
+        from selenium import webdriver
+        options = webdriver.ChromeOptions()
+        options.add_argument("start-maximized")
+        options.add_argument('headless')
+        options.add_argument('window-size=1920x1080')
+        options.add_argument("disable-gpu")
+        options.add_argument("--no-sandbox")
+        core1 = WebDriverFactory().launch(options=options)
+        core2 = WebDriverFactory().launch(options=options)
         self.driver1 = EventFiringWebDriver(core1, EventListener())
         self.driver2 = EventFiringWebDriver(core2, EventListener())
         self.driver1.maximize_window()

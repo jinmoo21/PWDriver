@@ -88,7 +88,7 @@ def _download_geckodriver(version):
         logger.info(f'Not found executable geckodriver. Geckodriver will be downloaded.')
         download_url = f'{GECKODRIVER_API}/download/{version}/geckodriver-{version}-' \
                        + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip') if OS_NAME == 'WIN'
-                          else 'macos.tar.gz' if OS_NAME == 'MAC' else 'linux32.tar.gz')
+                          else 'macos.tar.gz' if OS_NAME == 'MAC' else 'linux' + ('64.tar.gz' if OS_BIT == '64bit' else '32.tar.gz'))
         file = requests.get(download_url, stream=True)
         file_name = f'{GECKODRIVER}{ZIP}' if OS_NAME == 'WIN' else f'{GECKODRIVER}{TAR_GZ}'
         with open(file_name, 'wb') as fd:
@@ -199,7 +199,7 @@ class WebDriverFactory:
                 setup_edgedriver()
                 return webdriver.Edge(options=options if options is not None else webdriver.EdgeOptions())
             if self._automation_browser == SAFARI:
-                if OS_NAME == 'WIN':
+                if OS_NAME is not 'MAC':
                     raise NotImplementedError('Cannot launch safari browser on Windows.')
                 return webdriver.Safari()
             remote_options = webdriver.ChromeOptions() if self._automation_browser == CHROME \
