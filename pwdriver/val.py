@@ -1,7 +1,7 @@
 import platform
 import sys
 
-OS_NAME = 'WIN' if platform.system() == 'Windows' else 'MAC'
+OS_NAME = 'WIN' if platform.system() == 'Windows' else 'MAC' if platform.system() == 'Darwin' else 'LINUX'
 OS_BIT = platform.architecture()[0]
 EXE = '.exe'
 INI = '.ini'
