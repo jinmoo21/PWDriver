@@ -32,7 +32,7 @@ jobs:
       - name: Install edge
         uses: browser-actions/setup-edge@latest
         if: |
-          matrix.browser == 'edge'
+          matrix.os != 'ubuntu-latest' && matrix.browser == 'edge'
       - name: Start XVFB
         run: Xvfb :99 &
         if: |
