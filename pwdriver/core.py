@@ -200,7 +200,7 @@ class WebDriverFactory:
                 return webdriver.Edge(options=options if options is not None else webdriver.EdgeOptions())
             if self._automation_browser == SAFARI:
                 if OS_NAME != 'MAC':
-                    raise NotImplementedError('Cannot launch safari browser on Windows.')
+                    raise NotImplementedError('Cannot launch safari browser on Windows or Linux.')
                 return webdriver.Safari()
             remote_options = webdriver.ChromeOptions() if self._automation_browser == CHROME \
                 else webdriver.FirefoxOptions()
