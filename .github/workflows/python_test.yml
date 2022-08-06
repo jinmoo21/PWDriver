@@ -30,9 +30,7 @@ jobs:
         if: |
           matrix.browser == 'chrome'
       - name: Start XVFB
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: npm test
+        run: Xvfb :99 &
         if: |
           matrix.os != 'windows-latest'
       - name: Setup chromedriver
@@ -41,4 +39,5 @@ jobs:
           matrix.browser == 'chrome'
       - name: Test in ${{ matrix.browser }} with unittest
         run: python -m unittest tests/${{ matrix.browser }}.py
-        if: ${{ always() }}
+        env:
+          DISPLAY: :99
