@@ -2,6 +2,7 @@ name: test-bot
 on:
   push:
     branches:
+      - master
       - 'releases/**'
 jobs:
   test:
@@ -9,7 +10,8 @@ jobs:
     strategy:
       matrix:
         os: [ macos-latest, windows-latest, ubuntu-latest ]
-        python-version: [ "3.10" ]
+        python-version: [ '3.10' ]
+        browser: [ 'chrome' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository
@@ -17,7 +19,7 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: ${{matrix.python-version}}
+          python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Install dependencies
         run: |
@@ -25,7 +27,17 @@ jobs:
           pip install -r requirements.txt
       - name: Install chromedriver
         uses: nanasess/setup-chromedriver@v1.0.7
+        if: |
+          matrix.browser == 'chrome'
+      - name: Start XVFB
+        run: Xvfb :99 &
+        env:
+          DISPLAY: :99
+        if: |
+          matrix.os != windows-latest
       - name: Prepare chromedriver
         run: chromedriver --url-base=/wd/hub &
-      - name: Test with unittest
-        run: python -m unittest tests/chrome.py
+        if: |
+          matrix.browser == 'chrome'
+      - name: Test in ${{ matrix.browser }} with unittest
+        run: python -m unittest tests/${{ matrix.browser }}.py
