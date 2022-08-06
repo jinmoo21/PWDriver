@@ -29,16 +29,16 @@ jobs:
         uses: nanasess/setup-chromedriver@v1.0.7
         if: |
           matrix.browser == 'chrome'
-      - name: Start XVFB and setup chromedriver
-        run: |
-          export DISPLAY=:99
-          chromedriver --url-base=/wd/hub &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+      - name: Start XVFB
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm test
         if: |
-          matrix.os != 'windows-latest' && matrix.browser == 'chrome'
+          matrix.os != 'windows-latest'
       - name: Setup chromedriver
         run: chromedriver --url-base=/wd/hub &
         if: |
-          matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+          matrix.browser == 'chrome'
       - name: Test in ${{ matrix.browser }} with unittest
         run: python -m unittest tests/${{ matrix.browser }}.py
+        if: ${{ always() }}
