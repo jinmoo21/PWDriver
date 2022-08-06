@@ -38,7 +38,8 @@ jobs:
         if: |
           matrix.browser == 'chrome'
       - name: Test in ${{ matrix.browser }} with unittest
-        with:
-          run: python -m unittest tests/${{ matrix.browser }}.py
+        run: python -m unittest tests/${{ matrix.browser }}.py
         env:
           DISPLAY: :99
+        if: |
+          matrix.os == 'macos-latest'
