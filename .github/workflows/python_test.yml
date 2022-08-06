@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: [ macos-latest, windows-latest, ubuntu-latest ]
         python-version: [ '3.10' ]
-        browser: [ 'safari' ]
+        browser: [ 'chrome', 'edge', 'safari' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository
@@ -29,6 +29,10 @@ jobs:
         uses: nanasess/setup-chromedriver@v1.0.7
         if: |
           matrix.browser == 'chrome'
+      - name: Install edge
+        uses: browser-actions/setup-edge@latest
+        if: |
+          matrix.browser == 'edge'
       - name: Start XVFB
         run: Xvfb :99 &
         if: |
@@ -41,5 +45,3 @@ jobs:
         run: python -m unittest tests/${{ matrix.browser }}.py
         env:
           DISPLAY: :99
-        if: |
-          matrix.os == 'macos-latest'
