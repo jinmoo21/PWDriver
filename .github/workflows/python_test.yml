@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: [ macos-latest, windows-latest, ubuntu-latest ]
         python-version: [ '3.10' ]
-        browser: [ 'chrome' ]
+        browser: [ 'safari' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository
@@ -38,6 +38,7 @@ jobs:
         if: |
           matrix.browser == 'chrome'
       - name: Test in ${{ matrix.browser }} with unittest
-        run: python -m unittest tests/${{ matrix.browser }}.py
+        with:
+          run: python -m unittest tests/${{ matrix.browser }}.py
         env:
           DISPLAY: :99
