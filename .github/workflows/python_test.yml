@@ -30,9 +30,7 @@ jobs:
         if: |
           matrix.browser == 'chrome'
       - name: Start XVFB
-        run: Xvfb :99 &
-        env:
-          DISPLAY: :99
+        run: export DISPLAY=:99
         if: |
           matrix.os != 'windows-latest'
       - name: Prepare chromedriver
