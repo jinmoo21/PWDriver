@@ -26,10 +26,19 @@ class SafariTest(unittest.TestCase):
         logger.info(self.driver.title)
         self.assertIn(self.driver.title, 'Google')
         self.driver.get('https://www.naver.com')
-        news_btn = self.driver.find_element(By.CSS_SELECTOR, '.link_news')
-        news_btn.click()
+        news_btn1 = self.driver.find_element(By.CSS_SELECTOR, '.link_news')
+        news_btn1.click()
         logger.info(self.driver.current_url)
         self.assertTrue(self.wait.until(expected_conditions.url_contains('https://news.naver.com')))
+
+        self.driver.get('https://www.google.com')
+        logger.info(self.driver.title)
+        self.assertIn(self.driver.title, 'Google')
+        self.driver.get('https://www.naver.com')
+        news_btn2 = self.driver.find_element(By.CSS_SELECTOR, '.link_join')
+        news_btn2.click()
+        logger.info(self.driver.current_url)
+        self.assertTrue(self.wait.until(expected_conditions.url_contains('https://nid.naver.com')))
 
 
 if __name__ == '__main__':
