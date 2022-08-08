@@ -35,7 +35,7 @@ def _get_local_chrome_version():
             output, error = p.communicate()
             version = output.decode('utf-8').strip().strip('Google Chrome ') if not error else None
     else:
-        with Popen(r'google-chrome --version', stdout=PIPE, stderr=PIPE) as p:
+        with Popen(r'google-chrome --version', stdout=PIPE, stderr=PIPE, shell=True) as p:
             output, error = p.communicate()
             version = output.decode('utf-8').strip().strip('Google Chrome ') if not error else None
     logger.info(f'Installed Chrome Browser version: {version}')
