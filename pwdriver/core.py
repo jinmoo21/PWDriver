@@ -1,5 +1,6 @@
 import os
 import re
+from subprocess import Popen, PIPE
 
 import requests
 import tarfile
@@ -19,20 +20,28 @@ driver_path = os.path.join(ROOT_DIR, DRIVER)
 
 def _get_local_chrome_version():
     if OS_NAME == 'WIN':
-        with os.popen(r'wmic datafile where name="C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" get '
-                      r'version /value') as stream:
-            version = stream.read().strip().strip('Version=')
-        if not version:
-            with os.popen(r'wmic datafile where name="C:\\Program Files ('
-                          r'x86)\\Google\\Chrome\\Application\\chrome.exe" get version /value') as stream:
-                version = stream.read().strip().strip('Version=')
+        path = ['Program Files', 'Program Files (x86)']
+        for loc in path:
+            with Popen(fr'wmic datafile where name="C:\\{loc}\\Google\\Chrome\\Application\\chrome.exe" get '
+                       r'version /value', stdout=PIPE, stderr=PIPE, shell=True) as p:
+                output, error = p.communicate()
+                if not error:
+                    version = output.decode('ansi').strip().strip('Version=')
+                    break
+                else:
+                    version = None
     elif OS_NAME == 'MAC':
-        with os.popen(r'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version') as stream:
-            version = stream.read().strip('Google Chrome ').strip()
+        with Popen(r'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version', stdout=PIPE,
+                   stderr=PIPE, shell=True) as p:
+            output, error = p.communicate()
+            version = output.decode('utf-8').strip().strip('Google Chrome ') if not error else None
     else:
-        with os.popen(r'google-chrome --version') as stream:
-            version = stream.read().strip('Google Chrome ').strip()
-    logger.info(f'Installed Chrome Browser version: {version}')
+        with Popen(r'google-chrome --version', stdout=PIPE, stderr=PIPE, shell=True) as p:
+            output, error = p.communicate()
+            version = output.decode('utf-8').strip().strip('Google Chrome ') if not error else None
+    logger.info(f'Installed {CHROME} Browser version: {version}')
+    if version is None:
+        raise NotImplementedError(f'{CHROME} browser not installed.')
     return version
 
 
@@ -88,7 +97,8 @@ def _download_geckodriver(version):
         logger.info(f'Not found executable geckodriver. Geckodriver will be downloaded.')
         download_url = f'{GECKODRIVER_API}/download/{version}/geckodriver-{version}-' \
                        + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip') if OS_NAME == 'WIN'
-                          else 'macos.tar.gz' if OS_NAME == 'MAC' else 'linux' + ('64.tar.gz' if OS_BIT == '64bit' else '32.tar.gz'))
+                          else 'macos.tar.gz' if OS_NAME == 'MAC' else 'linux' + (
+            '64.tar.gz' if OS_BIT == '64bit' else '32.tar.gz'))
         file = requests.get(download_url, stream=True)
         file_name = f'{GECKODRIVER}{ZIP}' if OS_NAME == 'WIN' else f'{GECKODRIVER}{TAR_GZ}'
         with open(file_name, 'wb') as fd:
@@ -119,20 +129,28 @@ def setup_geckodriver():
 
 def _get_local_edge_version():
     if OS_NAME == 'WIN':
-        with os.popen(r'wmic datafile where name="C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe" get '
-                      r'version /value') as stream:
-            version = stream.read().strip().strip('Version=')
-        if not version:
-            with os.popen(r'wmic datafile where name="C:\\Program Files ('
-                          r'x86)\\Microsoft\\Edge\\Application\\msedge.exe" get version /value') as stream:
-                version = stream.read().strip().strip('Version=')
+        path = ['Program Files', 'Program Files (x86)']
+        for loc in path:
+            with Popen(fr'wmic datafile where name="C:\\{loc}\\Microsoft\\Edge\\Application\\msedge.exe" get '
+                       r'version /value', stdout=PIPE, stderr=PIPE, shell=True) as p:
+                output, error = p.communicate()
+                if not error:
+                    version = output.decode('ansi').strip().strip('Version=')
+                    break
+                else:
+                    version = None
     elif OS_NAME == 'MAC':
-        with os.popen(r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version') as stream:
-            version = stream.read().strip('Microsoft Edge ').strip()
+        with Popen(r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version', stdout=PIPE,
+                   stderr=PIPE, shell=True) as p:
+            output, error = p.communicate()
+            version = output.decode('utf-8').strip().strip('Microsoft Edge ') if not error else None
     else:
-        with os.popen(r'microsoft-edge --version') as stream:
-            version = stream.read().strip('Microsoft Edge ').strip()
-    logger.info(f'Installed Edge Browser version: {version}')
+        with Popen(r'microsoft-edge --version', stdout=PIPE, stderr=PIPE, shell=True) as p:
+            output, error = p.communicate()
+            version = output.decode('utf-8').strip().strip('Microsoft Edge ') if not error else None
+    logger.info(f'Installed {EDGE} browser version: {version}')
+    if version is None:
+        raise NotImplementedError(f'{EDGE} browser not installed.')
     return version
 
 

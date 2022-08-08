@@ -31,8 +31,9 @@ class EdgeTest(unittest.TestCase):
         self.driver1.get('https://www.naver.com')
         news_btn1 = self.driver1.find_element(By.CSS_SELECTOR, '.link_news')
         news_btn1.click()
+        self.wait1.until(expected_conditions.url_contains('https://news.naver.com'))
         logger.info(self.driver1.current_url)
-        self.assertTrue(self.wait1.until(expected_conditions.url_contains('https://news.naver.com')))
+        self.assertIn('https://news.naver.com', self.driver1.current_url)
 
         self.driver2.get('https://www.google.com')
         logger.info(self.driver2.title)
@@ -40,8 +41,9 @@ class EdgeTest(unittest.TestCase):
         self.driver2.get('https://www.naver.com')
         news_btn2 = self.driver2.find_element(By.CSS_SELECTOR, '.link_join')
         news_btn2.click()
+        self.wait2.until(expected_conditions.url_contains('https://nid.naver.com'))
         logger.info(self.driver2.current_url)
-        self.assertTrue(self.wait2.until(expected_conditions.url_contains('https://nid.naver.com')))
+        self.assertIn('https://nid.naver.com', self.driver2.current_url)
 
 
 if __name__ == '__main__':
