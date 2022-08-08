@@ -25,10 +25,11 @@ def _get_local_chrome_version():
             with Popen(fr'wmic datafile where name="C:\\{loc}\\Google\\Chrome\\Application\\chrome.exe" get '
                        r'version /value', stdout=PIPE, stderr=PIPE, shell=True) as p:
                 output, error = p.communicate()
-                if error:
+                if not error:
+                    version = output.decode('ansi').strip().strip('Version=')
+                    break
+                else:
                     version = None
-                    continue
-                version = output.decode('ansi').strip().strip('Version=')
     elif OS_NAME == 'MAC':
         with Popen(r'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version', stdout=PIPE,
                    stderr=PIPE, shell=True) as p:
@@ -38,9 +39,9 @@ def _get_local_chrome_version():
         with Popen(r'google-chrome --version', stdout=PIPE, stderr=PIPE, shell=True) as p:
             output, error = p.communicate()
             version = output.decode('utf-8').strip().strip('Google Chrome ') if not error else None
-    logger.info(f'Installed Chrome Browser version: {version}')
+    logger.info(f'Installed {CHROME} Browser version: {version}')
     if version is None:
-        raise NotImplementedError('Chrome browser not installed.')
+        raise NotImplementedError(f'{CHROME} browser not installed.')
     return version
 
 
@@ -133,10 +134,11 @@ def _get_local_edge_version():
             with Popen(fr'wmic datafile where name="C:\\{loc}\\Microsoft\\Edge\\Application\\msedge.exe" get '
                        r'version /value', stdout=PIPE, stderr=PIPE, shell=True) as p:
                 output, error = p.communicate()
-                if error:
+                if not error:
+                    version = output.decode('ansi').strip().strip('Version=')
+                    break
+                else:
                     version = None
-                    continue
-                version = output.decode('ansi').strip().strip('Version=')
     elif OS_NAME == 'MAC':
         with Popen(r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version', stdout=PIPE,
                    stderr=PIPE, shell=True) as p:

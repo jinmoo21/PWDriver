@@ -6,7 +6,7 @@ on:
       - 'releases/**'
 jobs:
   test:
-    name: ${{ matrix.browser }} UI Test on ${{ matrix.os }}
+    name: ${{ matrix.browser }} e2e test on ${{ matrix.os }}
     strategy:
       matrix:
         os: [ macos-latest, windows-latest, ubuntu-latest ]
