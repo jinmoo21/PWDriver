@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: [ macos-latest, windows-latest, ubuntu-latest ]
         python-version: [ '3.10' ]
-        browser: [ 'chrome', 'edge', 'safari' ]
+        browser: [ 'chrome', 'edge' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository
@@ -26,19 +26,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install pwdriver codecov
       - name: Install chrome
+        if: matrix.browser == 'chrome'
         uses: nanasess/setup-chromedriver@v1.0.7
-        if: matrix.browser == 'chrome'
       - name: Setup chromedriver
-        run: chromedriver --url-base=/wd/hub &
         if: matrix.browser == 'chrome'
+        run: chromedriver --url-base=/wd/hub &
       - name: Install edge
+        if: matrix.browser == 'edge' && runner.os != 'Linux'
         uses: browser-actions/setup-edge@latest
-        if: matrix.os != 'ubuntu-latest' && matrix.browser == 'edge'
       - name: Start XVFB
+        if: runner.os != 'Windows'
         run: Xvfb :99 &
-        if: matrix.os != 'windows-latest'
+      - name: Make configuration file
+        run: |
+          echo [automation] > config.ini
+          echo automation.browser=${{ matrix.browser }} >> config.ini
+          echo automation.local=true >> config.ini
+          echo automation.url=http://localhost:4444/wd/hub >> config.ini
       - name: Test in ${{ matrix.browser }} with unittest
-        run: coverage run --omit="tests/*" -m unittest discover tests/ ${{ matrix.browser }}.py
+        run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
           DISPLAY: :99
       - name: Upload coverage
