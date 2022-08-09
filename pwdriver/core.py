@@ -98,7 +98,7 @@ def _download_geckodriver(version):
         download_url = f'{GECKODRIVER_API}/download/{version}/geckodriver-{version}-' \
                        + (('win64.zip' if OS_BIT == '64bit' else 'win32.zip') if OS_NAME == 'WIN'
                           else 'macos.tar.gz' if OS_NAME == 'MAC' else 'linux' + (
-            '64.tar.gz' if OS_BIT == '64bit' else '32.tar.gz'))
+                            '64.tar.gz' if OS_BIT == '64bit' else '32.tar.gz'))
         file = requests.get(download_url, stream=True)
         file_name = f'{GECKODRIVER}{ZIP}' if OS_NAME == 'WIN' else f'{GECKODRIVER}{TAR_GZ}'
         with open(file_name, 'wb') as fd:
