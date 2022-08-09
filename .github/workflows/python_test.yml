@@ -5,13 +5,13 @@ on:
       - master
       - 'releases/**'
 jobs:
-  test:
+  chrome-edge:
     name: ${{ matrix.browser }} e2e test on ${{ matrix.os }}
     strategy:
       matrix:
         os: [ macos-latest, windows-latest, ubuntu-latest ]
         python-version: [ '3.10' ]
-        browser: [ 'chrome', 'edge', 'gecko']
+        browser: [ 'chrome', 'edge' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository
@@ -34,12 +34,6 @@ jobs:
       - name: Install edge
         uses: browser-actions/setup-edge@latest
         if: matrix.browser == 'edge' && runner.os != 'Linux'
-      - name: Install firefox
-        uses: abhi1693/setup-browser@main
-        with:
-          browser: firefox
-          version: latest
-        if: matrix.browser == 'gecko'
       - name: Start XVFB
         run: Xvfb :99 &
         if: runner.os != 'Windows'
@@ -77,6 +71,39 @@ jobs:
         run: |
           echo [automation] > config.ini
           echo automation.browser=safari >> config.ini
+          echo automation.local=true >> config.ini
+          echo automation.url=http://localhost:4444/wd/hub >> config.ini
+      - name: Test in safari with unittest
+        run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
+        env:
+          DISPLAY: :99
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+
+  firefox:
+    name: firefox e2e test on ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pwdriver codecov
+      - name: Install firefox
+        uses: browser-actions/setup-firefox@latest
+        if: matrix.browser == 'gecko' && runner.os == 'Linux'
+      - name: Start XVFB
+        run: Xvfb :99 &
+      - name: Make configuration file
+        run: |
+          echo [automation] > config.ini
+          echo automation.browser=gecko >> config.ini
           echo automation.local=true >> config.ini
           echo automation.url=http://localhost:4444/wd/hub >> config.ini
       - name: Test in safari with unittest
