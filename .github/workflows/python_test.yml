@@ -37,8 +37,14 @@ jobs:
       - name: Start XVFB
         run: Xvfb :99 &
         if: matrix.os != 'windows-latest'
+      - name: Make configuration file
+        run: |
+          echo [automation] > config.ini
+          echo automation.browser=${{ matrix.browser }} >> config.ini
+          echo automation.local=true >> config.ini
+          echo automation.url=http://localhost:4444/wd/hub >> config.ini
       - name: Test in ${{ matrix.browser }} with unittest
-        run: coverage run --omit="tests/*" -m unittest discover tests/ ${{ matrix.browser }}.py
+        run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
           DISPLAY: :99
       - name: Upload coverage
