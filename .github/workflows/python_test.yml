@@ -47,5 +47,6 @@ jobs:
         run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
           DISPLAY: :99
+        if: matrix.os != 'macos-latest' && matrix.browser == 'safari'
       - name: Upload coverage
         uses: codecov/codecov-action@v3
