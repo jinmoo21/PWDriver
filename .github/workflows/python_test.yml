@@ -32,7 +32,7 @@ jobs:
         if: matrix.browser == 'chrome'
         run: chromedriver --url-base=/wd/hub &
       - name: Install edge
-        if: runner.os != 'Linux' && matrix.browser == 'edge'
+        if: matrix.browser == 'edge' && runner.os != 'Linux'
         uses: browser-actions/setup-edge@latest
       - name: Start XVFB
         if: runner.os != 'Windows'
@@ -44,7 +44,7 @@ jobs:
           echo automation.local=true >> config.ini
           echo automation.url=http://localhost:4444/wd/hub >> config.ini
       - name: Test in ${{ matrix.browser }} with unittest
-        if: runner.os != 'macOS' && matrix.browser == 'safari'
+        if: ! runner.os != 'macOS' && matrix.browser == 'safari'
         run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
           DISPLAY: :99
