@@ -26,17 +26,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install pwdriver codecov
       - name: Install chrome
+        if: matrix.browser == 'chrome'
         uses: nanasess/setup-chromedriver@v1.0.7
-        if: matrix.browser == 'chrome'
       - name: Setup chromedriver
-        run: chromedriver --url-base=/wd/hub &
         if: matrix.browser == 'chrome'
+        run: chromedriver --url-base=/wd/hub &
       - name: Install edge
+        if: runner.os != 'Linux' && matrix.browser == 'edge'
         uses: browser-actions/setup-edge@latest
-        if: matrix.os != 'ubuntu-latest' && matrix.browser == 'edge'
       - name: Start XVFB
+        if: runner.os != 'Windows'
         run: Xvfb :99 &
-        if: matrix.os != 'windows-latest'
       - name: Make configuration file
         run: |
           echo [automation] > config.ini
@@ -44,9 +44,9 @@ jobs:
           echo automation.local=true >> config.ini
           echo automation.url=http://localhost:4444/wd/hub >> config.ini
       - name: Test in ${{ matrix.browser }} with unittest
+        if: runner.os != 'macOS' && matrix.browser == 'safari'
         run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
           DISPLAY: :99
-        if: matrix.os != 'macos-latest' && matrix.browser == 'safari'
       - name: Upload coverage
         uses: codecov/codecov-action@v3
