@@ -106,7 +106,7 @@ jobs:
           echo automation.browser=gecko >> config.ini
           echo automation.local=true >> config.ini
           echo automation.url=http://localhost:4444/wd/hub >> config.ini
-      - name: Test in safari with unittest
+      - name: Test in firefox with unittest
         run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
           DISPLAY: :99
