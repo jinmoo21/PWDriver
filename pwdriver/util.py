@@ -1,11 +1,12 @@
 import os
+from logging import Logger
 
 
 def parse_boolean(arg):
     return arg.lower() in ['true', 'y', 'yes']
 
 
-def get_pattern_matched_file(path, regex):
+def get_pattern_matched_file(path, regex) -> list:
     import re
     file_list = []
     pattern = re.compile(regex)
@@ -15,13 +16,13 @@ def get_pattern_matched_file(path, regex):
     return file_list
 
 
-def set_file_executable(path):
+def set_file_executable(path) -> None:
     if os.path.isfile(path) and not os.access(path, os.X_OK):
         import stat
         os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
 
 
-def get_logger(name=None):
+def get_logger(name=None) -> Logger:
     import logging
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
