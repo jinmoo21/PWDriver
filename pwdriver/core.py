@@ -6,6 +6,7 @@ import requests
 import tarfile
 import zipfile
 
+from appium.webdriver.webdriver import WebDriver
 from selenium import webdriver
 from selenium.common.exceptions import SessionNotCreatedException
 
@@ -18,7 +19,7 @@ logger = util.get_logger('core')
 driver_path = os.path.join(ROOT_DIR, DRIVER)
 
 
-def _get_local_chrome_version():
+def _get_local_chrome_version() -> str:
     if OS_NAME == 'WIN':
         path = ['Program Files', 'Program Files (x86)']
         for loc in path:
@@ -45,7 +46,7 @@ def _get_local_chrome_version():
     return version
 
 
-def _get_latest_chrome_version(version):
+def _get_latest_chrome_version(version) -> str:
     latest_release = requests.get(f'{CHROMEDRIVER_API}/LATEST_RELEASE_{re.split(r"[.]", version)[0]}')
     global driver_path
     if not driver_path.endswith(latest_release.text):
@@ -54,7 +55,7 @@ def _get_latest_chrome_version(version):
     return latest_release.text
 
 
-def _download_chromedriver(version):
+def _download_chromedriver(version) -> None:
     global driver_path
     if not os.path.isfile(os.path.join(driver_path, CHROMEDRIVER_NAME)):
         logger.info('Not found executable chromedriver. Chromedriver will be downloaded.')
@@ -76,14 +77,14 @@ def _download_chromedriver(version):
         logger.info(f'Executable driver found: ({os.path.abspath(driver_path)})')
 
 
-def setup_chromedriver():
+def setup_chromedriver() -> None:
     _download_chromedriver(_get_latest_chrome_version(_get_local_chrome_version()))
     global driver_path
     util.set_file_executable(os.path.join(driver_path, CHROMEDRIVER_NAME))
     os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(driver_path)}'
 
 
-def _get_latest_gecko_version():
+def _get_latest_gecko_version() -> str:
     version = re.split(r'/+', requests.get(f'{GECKODRIVER_API}/latest', allow_redirects=True).url)[-1]
     global driver_path
     if not driver_path.endswith(version):
@@ -91,7 +92,7 @@ def _get_latest_gecko_version():
     return version
 
 
-def _download_geckodriver(version):
+def _download_geckodriver(version) -> None:
     global driver_path
     if not os.path.isfile(os.path.join(driver_path, GECKODRIVER_NAME)):
         logger.info(f'Not found executable geckodriver. Geckodriver will be downloaded.')
@@ -120,14 +121,14 @@ def _download_geckodriver(version):
         logger.info(f'Executable driver found: ({os.path.abspath(driver_path)})')
 
 
-def setup_geckodriver():
+def setup_geckodriver() -> None:
     _download_geckodriver(_get_latest_gecko_version())
     global driver_path
     util.set_file_executable(os.path.join(driver_path, GECKODRIVER_NAME))
     os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(driver_path)}'
 
 
-def _get_local_edge_version():
+def _get_local_edge_version() -> str:
     if OS_NAME == 'WIN':
         path = ['Program Files', 'Program Files (x86)']
         for loc in path:
@@ -154,7 +155,7 @@ def _get_local_edge_version():
     return version
 
 
-def _download_edgedriver(version):
+def _download_edgedriver(version) -> None:
     global driver_path
     if not driver_path.endswith(version):
         driver_path = os.path.join(driver_path, EDGE, version)
@@ -179,7 +180,7 @@ def _download_edgedriver(version):
         logger.info(f'Executable driver found: ({os.path.abspath(driver_path)})')
 
 
-def setup_edgedriver():
+def setup_edgedriver() -> None:
     _download_edgedriver(_get_local_edge_version())
     global driver_path
     util.set_file_executable(os.path.join(driver_path, EDGEDRIVER_NAME))
@@ -204,7 +205,7 @@ class WebDriverFactory:
         if not self._automation_local:
             self._automation_url = config.get('automation', 'automation.url')
 
-    def launch(self, options=None):
+    def launch(self, options=None) -> WebDriver:
         try:
             if self._automation_browser == CHROME and self._automation_local:
                 setup_chromedriver()
