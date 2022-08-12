@@ -15,13 +15,22 @@ setuptools.setup(
     url='https://github.com/jinmoo21/pwdriver',
     packages=setuptools.find_packages(),
     classifiers=[
-        'Programming Language :: Python :: 3',
+        'Topic :: Software Development :: Quality Assurance',
+        'Topic :: Software Development :: Testing',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
+        'Operating System :: OS Independent'
     ],
     python_requires='>=3.7',
     install_requires=[
         'selenium>=4.4.0',
-        'Appium-Python-Client>=2.6.1'
+        'Appium-Python-Client>=2.6.1',
+        'requests>=2.28.1',
+        'setuptools>=64.0.1'
     ]
 )
