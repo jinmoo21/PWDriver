@@ -1,5 +1,4 @@
-from pwdriver import core
-from selenium import webdriver
+from pwdriver.core import WebDriverFactory
 from tests.pages.bing_page import BingPage
 
 import unittest
@@ -7,8 +6,7 @@ import unittest
 
 class BrowserTest(unittest.TestCase):
     def setUp(self):
-        core.setup_chromedriver()
-        self.driver = webdriver.Chrome()
+        self.driver = WebDriverFactory().launch()
 
     def tearDown(self):
         self.driver.quit()

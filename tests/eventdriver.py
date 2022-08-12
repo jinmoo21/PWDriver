@@ -33,6 +33,10 @@ class EventDriverTest(unittest.TestCase):
         self.wait.until(expected_conditions.url_contains('https://news.naver.com'))
         logger.info(self.driver.current_url)
         self.assertIn('https://news.naver.com', self.driver.current_url)
+        self.driver.back()
+        self.assertIn('https://www.naver.com', self.driver.current_url)
+        self.driver.forward()
+        self.assertIn('https://news.naver.com', self.driver.current_url)
 
         self.driver.get('https://www.naver.com')
         news_btn2 = self.driver.find_element(By.CSS_SELECTOR, '.link_join')
@@ -40,14 +44,16 @@ class EventDriverTest(unittest.TestCase):
         self.wait.until(expected_conditions.url_contains('https://nid.naver.com'))
         logger.info(self.driver.current_url)
         self.assertIn('https://nid.naver.com', self.driver.current_url)
+        self.driver.execute_script('window.scrollTo(0, 0)')
 
     def test_two(self):
         page = BingPage(self.driver)
         page.get()
-        page.type_keyword("치킨")
+        page.type_keyword('치킨')
         page.click_search()
-        self.assertIn("https://www.bing.com/search?q=%EC%B9%98%ED%82%A8", self.driver.current_url)
-        self.assertEqual("치킨 - Search", self.driver.title)
+        self.wait.until(expected_conditions.url_contains('/search?q='))
+        self.assertIn('https://www.bing.com/search?q=%EC%B9%98%ED%82%A8', self.driver.current_url)
+        self.assertEqual('치킨 - Search', self.driver.title)
 
 
 if __name__ == '__main__':

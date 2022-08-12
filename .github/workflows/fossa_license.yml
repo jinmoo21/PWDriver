@@ -1,0 +1,15 @@
+name: License - 📝
+on:
+  push:
+    branches:
+      - 'releases/**'
+jobs:
+  fossa-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: License check
+        uses: fossas/fossa-action@main
+        with:
+          api-key: ${{ secrets.FOSSAAPIKEY }}

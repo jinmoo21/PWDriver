@@ -1,8 +1,7 @@
-name: test-bot
+name: CI - 🧪
 on:
   push:
     branches:
-      - master
       - 'releases/**'
 jobs:
   chrome-edge:
@@ -97,7 +96,6 @@ jobs:
           pip install pwdriver codecov
       - name: Install firefox
         uses: browser-actions/setup-firefox@latest
-        if: matrix.browser == 'gecko' && runner.os == 'Linux'
       - name: Start XVFB
         run: Xvfb :99 &
       - name: Make configuration file
