@@ -21,12 +21,7 @@ setuptools.setup(
     ],
     python_requires='>=3.7',
     install_requires=[
-        'certifi>=2022.6.15',
-        'charset-normalizer>=2.1.0',
-        'idna>=3.3',
-        'requests>=2.28.1',
         'selenium>=4.4.0',
-        'urllib3>=1.26.11',
         'Appium-Python-Client>=2.6.1'
     ]
 )
