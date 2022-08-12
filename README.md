@@ -5,6 +5,7 @@ PWDriver (PyWebDriver)
 [![Code Coverage](https://codecov.io/gh/jinmoo21/pwdriver/branch/master/graph/badge.svg)](https://codecov.io/gh/jinmoo21/pwdriver)
 [![E2e test](https://github.com/jinmoo21/pwdriver/actions/workflows/python_test.yml/badge.svg)](https://github.com/jinmoo21/pwdriver/actions/workflows/python_test.yml)
 [![Release status](https://github.com/jinmoo21/pwdriver/actions/workflows/python_release.yml/badge.svg)](https://github.com/jinmoo21/pwdriver/actions/workflows/python_release.yml)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjinmoo21%2FPWDriver.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjinmoo21%2FPWDriver?ref=badge_shield)
 
 ## Motivation
 
@@ -83,3 +84,6 @@ from pwdriver import core
 core.setup_edgedriver()
 driver = webdriver.Edge()
 ```
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjinmoo21%2FPWDriver.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjinmoo21%2FPWDriver?ref=badge_large)
