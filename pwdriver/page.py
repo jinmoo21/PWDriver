@@ -21,12 +21,11 @@ class BasePage(object):
     def __init__(self, driver):
         self._driver = driver
         self._target = BaseElement(driver)
+        self._url = None
+        self._locator = None
 
     def _is_loaded(self) -> None:
         assert self._url in self._driver.current_url
-        # it = iter(self._locator)
-        # for i in range(len(self._locator)):
-        #     self._target.element = self._locator[next(it)]
 
     def _load(self) -> None:
         self._driver.get(self._url)
