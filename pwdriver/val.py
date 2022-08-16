@@ -1,8 +1,13 @@
 import platform
 import sys
 
-OS_NAME = 'WIN' if platform.system() == 'Windows' else 'MAC' if platform.system() == 'Darwin' else 'LINUX'
-OS_BIT = platform.architecture()[0]
+platform_dict = {
+    'Windows': 'win',
+    'Darwin': 'mac',
+    'Linux': 'linux'
+}
+OS_NAME = platform_dict[platform.system()]
+OS_BIT = '64' if platform.architecture()[0] == '64bit' else '32'
 EXE = '.exe'
 INI = '.ini'
 LOG = '.log'
@@ -16,13 +21,13 @@ CHROMEDRIVER_API = 'https://chromedriver.storage.googleapis.com'
 DRIVER = 'driver'
 CHROME = 'chrome'
 CHROMEDRIVER = f'{CHROME}{DRIVER}'
-CHROMEDRIVER_NAME = f'{CHROMEDRIVER}{EXE}' if OS_NAME == 'WIN' else CHROMEDRIVER
+CHROMEDRIVER_NAME = f'{CHROMEDRIVER}{EXE}' if OS_NAME == 'win' else CHROMEDRIVER
 GECKODRIVER_API = 'https://github.com/mozilla/geckodriver/releases'
 GECKO = 'gecko'
 GECKODRIVER = f'{GECKO}{DRIVER}'
-GECKODRIVER_NAME = f'{GECKODRIVER}{EXE}' if OS_NAME == 'WIN' else GECKODRIVER
+GECKODRIVER_NAME = f'{GECKODRIVER}{EXE}' if OS_NAME == 'win' else GECKODRIVER
 EDGEDRIVER_API = 'https://msedgedriver.azureedge.net'
 EDGE = 'edge'
 EDGEDRIVER = f'msedge{DRIVER}'
-EDGEDRIVER_NAME = f'{EDGEDRIVER}{EXE}' if OS_NAME == 'WIN' else EDGEDRIVER
+EDGEDRIVER_NAME = f'{EDGEDRIVER}{EXE}' if OS_NAME == 'win' else EDGEDRIVER
 SAFARI = 'safari'

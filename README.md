@@ -6,7 +6,7 @@
 [![Release status](https://github.com/jinmoo21/pwdriver/actions/workflows/python_release.yml/badge.svg)](https://github.com/jinmoo21/pwdriver/actions/workflows/python_release.yml)
 [![PyPI version](https://badge.fury.io/py/pwdriver.svg)](https://badge.fury.io/py/pwdriver)
 
-[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/jinmoo21/PWDriver/blob/master/LICENSE)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjinmoo21%2FPWDriver.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjinmoo21%2FPWDriver?ref=badge_shield)
 
 ## Motivation
@@ -38,10 +38,10 @@ config.ini 's contents look like this.
 ```ini
 [automation]
 ;automation.browser: chrome, gecko, edge, safari
-automation.browser=chrome
+automation.browser=safari
 ;automation.local: true, false
-automation.local=true
-automation.url=http://localhost:4444/wd/hub
+automation.local=false
+automation.url=http://192.168.0.19:4444
 ```
 
 ### 3. Import WebDriverFactory.
@@ -105,18 +105,18 @@ Modules that page elements and locators already implemented, so nevermind.
 
 ```python
 from selenium.webdriver.common.by import By
+
 from pwdriver.page import BasePage
 
 
 class BingPage(BasePage):
-    _url = 'https://www.bing.com'
-    _locator = {
-        'input': (By.CSS_SELECTOR, 'input#sb_form_q'),
-        'search': (By.CSS_SELECTOR, 'label#search_icon')
-    }
-
     def __init__(self, driver):
         super().__init__(driver)
+        self._url = 'https://www.bing.com'
+        self._locator = {
+            'input': (By.CSS_SELECTOR, 'input#sb_form_q'),
+            'search': (By.CSS_SELECTOR, 'label#search_icon')
+        }
 
     def type_keyword(self, text) -> None:
         self._by('input').send_keys(text)
