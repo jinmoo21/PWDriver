@@ -3,7 +3,7 @@ import sys
 
 platform_dict = {
     'Windows': 'win',
-    'DarWin': 'mac',
+    'Darwin': 'mac',
     'Linux': 'linux'
 }
 OS_NAME = platform_dict[platform.system()]
