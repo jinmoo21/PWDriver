@@ -28,6 +28,6 @@ GECKODRIVER = f'{GECKO}{DRIVER}'
 GECKODRIVER_NAME = f'{GECKODRIVER}{EXE}' if OS_NAME == 'win' else GECKODRIVER
 EDGEDRIVER_API = 'https://msedgedriver.azureedge.net'
 EDGE = 'edge'
-EDGEDRIVER = f'msedge{DRIVER}'
+EDGEDRIVER = f'ms{EDGE}{DRIVER}'
 EDGEDRIVER_NAME = f'{EDGEDRIVER}{EXE}' if OS_NAME == 'win' else EDGEDRIVER
 SAFARI = 'safari'

@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='pwdriver',
-    version='0.26.2',
+    version='0.26.3',
     license='MIT',
     author='Jinmoo Han',
     author_email='jinmoo21@naver.com',
@@ -31,6 +31,6 @@ setuptools.setup(
         'selenium>=4.4.0',
         'Appium-Python-Client>=2.6.1',
         'requests>=2.28.1',
-        'setuptools>=65.0.1'
+        'setuptools>=65.1.1'
     ]
 )

@@ -1,6 +1,5 @@
 import unittest
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.events import EventFiringWebDriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -18,42 +17,27 @@ class EventDriverTest(unittest.TestCase):
         core = WebDriverFactory().launch()
         self.driver = EventFiringWebDriver(core, EventListener())
         self.driver.maximize_window()
-        self.wait = WebDriverWait(self.driver, 5)
+        self.wait = WebDriverWait(self.driver, 20)
 
     def tearDown(self):
         self.driver.quit()
 
-    def test_one(self):
-        self.driver.get('https://www.google.com')
-        logger.info(self.driver.title)
-        self.assertIn(self.driver.title, 'Google')
-        self.driver.get('https://www.naver.com')
-        news_btn1 = self.driver.find_element(By.CSS_SELECTOR, '.link_news')
-        news_btn1.click()
-        self.wait.until(expected_conditions.url_contains('https://news.naver.com'))
-        logger.info(self.driver.current_url)
-        self.assertIn('https://news.naver.com', self.driver.current_url)
-        self.driver.back()
-        self.assertIn('https://www.naver.com', self.driver.current_url)
-        self.driver.forward()
-        self.assertIn('https://news.naver.com', self.driver.current_url)
-
-        self.driver.get('https://www.naver.com')
-        news_btn2 = self.driver.find_element(By.CSS_SELECTOR, '.link_join')
-        news_btn2.click()
-        self.wait.until(expected_conditions.url_contains('https://nid.naver.com'))
-        logger.info(self.driver.current_url)
-        self.assertIn('https://nid.naver.com', self.driver.current_url)
-        self.driver.execute_script('window.scrollTo(0, 0)')
-
-    def test_two(self):
+    def test_something(self):
         page = BingPage(self.driver)
         page.get()
-        page.type_keyword('치킨')
+        keyword = 'chicken'
+        page.type_keyword(keyword)
         page.click_search()
         self.wait.until(expected_conditions.url_contains('/search?q='))
-        self.assertIn('https://www.bing.com/search?q=%EC%B9%98%ED%82%A8', self.driver.current_url)
-        self.assertEqual('치킨 - Search', self.driver.title)
+        self.assertIn(f'https://www.bing.com/search?q={keyword}', self.driver.current_url)
+        self.assertEqual(f'{keyword} - Search', self.driver.title)
+        self.driver.back()
+        self.wait.until(expected_conditions.url_contains('https://www.bing.com'))
+        self.assertIn('https://www.bing.com', self.driver.current_url)
+        self.driver.forward()
+        self.wait.until(expected_conditions.url_contains(f'/search?q={keyword}'))
+        self.assertIn(f'https://www.bing.com/search?q={keyword}', self.driver.current_url)
+        self.driver.execute_script('window.scrollTo(0, 0)')
 
 
 if __name__ == '__main__':
