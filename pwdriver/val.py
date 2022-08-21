@@ -13,7 +13,7 @@ INI = '.ini'
 LOG = '.log'
 ZIP = '.zip'
 TAR_GZ = '.tar.gz'
-ROOT_DIR = sys.path[1]
+ROOT_DIR = sys.path[0]
 CONFIG_NAME = f'config{INI}'
 LOG_DIR = 'logs'
 LOG_NAME = f'output{LOG}'
@@ -31,3 +31,5 @@ EDGE = 'edge'
 EDGEDRIVER = f'ms{EDGE}{DRIVER}'
 EDGEDRIVER_NAME = f'{EDGEDRIVER}{EXE}' if OS_NAME == 'win' else EDGEDRIVER
 SAFARI = 'safari'
+ANDROID = 'android'
+IOS = 'ios'

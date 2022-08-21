@@ -1,18 +1,23 @@
+import configparser
+import glob
 import os
 import re
+import sys
 from subprocess import Popen, PIPE
 
 import requests
 import tarfile
 import zipfile
 
+from appium.options.android import UiAutomator2Options
+from appium.options.ios import XCUITestOptions
 from selenium import webdriver
 from selenium.webdriver.safari.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from pwdriver.val import CONFIG_NAME, CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, \
     EDGE, EDGEDRIVER, EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, GECKODRIVER_NAME, \
-    OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP
+    OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP, ANDROID, IOS
 from pwdriver import util
 
 logger = util.get_logger('core')
@@ -186,38 +191,45 @@ def setup_edgedriver() -> None:
 
 class WebDriverFactory:
     def __init__(self):
-        import configparser as cp
-        config = cp.ConfigParser()
-        import glob
+        config = configparser.ConfigParser()
+        config.optionxform = str
         config_path = glob.glob(os.path.join(ROOT_DIR, '**', CONFIG_NAME), recursive=True)
         if not config_path:
             raise NotImplementedError(f'Not found \'{CONFIG_NAME}\' configuration file in directory.')
         config.read(config_path[0])
-        self._automation_browser = config.get('automation', 'automation.browser')
-        if self._automation_browser not in [CHROME, GECKO, EDGE, SAFARI]:
-            raise NotImplementedError(f'Unsupported browser name: {self._automation_browser}')
-        self._automation_local = util.parse_boolean(config.get('automation', 'automation.local'))
+        self._automation_target = config.get('automation', 'target')
+        if self._automation_target not in [CHROME, GECKO, EDGE, SAFARI, ANDROID, IOS]:
+            raise NotImplementedError(f'Unsupported browser name: {self._automation_target}')
+        self._mobile_caps = {}
+        if self._automation_target in [ANDROID, IOS]:
+            try:
+                self._mobile_caps = dict(config.items('mobile'))
+            except configparser.NoSectionError:
+                raise NotImplementedError(f'Capabilities for {self._automation_target} must exist.')
+        self._automation_local = util.parse_boolean(config.get('automation', 'local'))
         if not self._automation_local:
-            self._automation_url = config.get('automation', 'automation.url')
+            self._automation_url = config.get('automation', 'url')
 
     def launch(self, options=None) -> WebDriver:
         options_dict = {
             CHROME: webdriver.ChromeOptions(),
             GECKO: webdriver.FirefoxOptions(),
             EDGE: webdriver.EdgeOptions(),
-            SAFARI: webdriver.safari.options.Options()
+            SAFARI: webdriver.safari.options.Options(),
+            ANDROID: UiAutomator2Options().load_capabilities(self._mobile_caps),
+            IOS: XCUITestOptions().load_capabilities(self._mobile_caps)
         }
         if self._automation_local:
-            if self._automation_browser == CHROME:
+            if self._automation_target == CHROME:
                 setup_chromedriver()
                 return webdriver.Chrome(options=options)
-            if self._automation_browser == GECKO:
+            if self._automation_target == GECKO:
                 setup_geckodriver()
                 return webdriver.Firefox(options=options)
-            if self._automation_browser == EDGE:
+            if self._automation_target == EDGE:
                 setup_edgedriver()
                 return webdriver.Edge(options=options)
-            if self._automation_browser == SAFARI:
+            if self._automation_target == SAFARI:
                 return webdriver.Safari(options=options if options is not None else options_dict[SAFARI])
         return webdriver.Remote(command_executor=self._automation_url,
-                                options=options if options is not None else options_dict[self._automation_browser])
+                                options=options if options is not None else options_dict[self._automation_target])
