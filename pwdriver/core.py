@@ -2,16 +2,16 @@ import configparser
 import glob
 import os
 import re
-import sys
 from subprocess import Popen, PIPE
 
+import appium.webdriver as aw
 import requests
 import tarfile
 import zipfile
 
 from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
-from selenium import webdriver
+from selenium import webdriver as sw
 from selenium.webdriver.safari.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -212,24 +212,26 @@ class WebDriverFactory:
 
     def launch(self, options=None) -> WebDriver:
         options_dict = {
-            CHROME: webdriver.ChromeOptions(),
-            GECKO: webdriver.FirefoxOptions(),
-            EDGE: webdriver.EdgeOptions(),
-            SAFARI: webdriver.safari.options.Options(),
+            CHROME: sw.ChromeOptions(),
+            GECKO: sw.FirefoxOptions(),
+            EDGE: sw.EdgeOptions(),
+            SAFARI: sw.safari.options.Options(),
             ANDROID: UiAutomator2Options().load_capabilities(self._mobile_caps),
             IOS: XCUITestOptions().load_capabilities(self._mobile_caps)
         }
         if self._automation_local:
             if self._automation_target == CHROME:
                 setup_chromedriver()
-                return webdriver.Chrome(options=options)
+                return sw.Chrome(options=options)
             if self._automation_target == GECKO:
                 setup_geckodriver()
-                return webdriver.Firefox(options=options)
+                return sw.Firefox(options=options)
             if self._automation_target == EDGE:
                 setup_edgedriver()
-                return webdriver.Edge(options=options)
+                return sw.Edge(options=options)
             if self._automation_target == SAFARI:
-                return webdriver.Safari(options=options if options is not None else options_dict[SAFARI])
-        return webdriver.Remote(command_executor=self._automation_url,
-                                options=options if options is not None else options_dict[self._automation_target])
+                return sw.Safari(options=options if options is not None else options_dict[SAFARI])
+        if self._automation_target not in [ANDROID, IOS]:
+            return sw.Remote(command_executor=self._automation_url,
+                             options=options if options is not None else options_dict[self._automation_target])
+        return aw.Remote(command_executor=self._automation_url, options=options_dict[self._automation_target])
