@@ -1,12 +1,9 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/"
+  - package-ecosystem: 'pip'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: 'weekly'
+      day: 'saturday'
     allow:
-      - dependency-name: "selenium"
-      - dependency-name: "Appium-Python-Client"
-      - dependency-name: "requests"
-      - dependency-name: "setuptools"
+      - dependency-name: '**'
