@@ -53,7 +53,7 @@ Now, we can launch webdriver.
 ```python
 from pwdriver.core import WebDriverFactory
 
-driver = WebDriverFactory().launch()
+driver = WebDriverFactory.launch()
 ```
 
 ## Alternative Usage
@@ -139,7 +139,7 @@ import unittest
 
 class BrowserTest(unittest.TestCase):
     def setUp(self):
-        self.driver = WebDriverFactory().launch()
+        self.driver = WebDriverFactory.launch()
 
     def tearDown(self):
         self.driver.quit()
@@ -175,9 +175,9 @@ from pwdriver.core import WebDriverFactory
 from pwdriver.listener import EventListener
 from pwdriver.util import get_logger
 
-logger = get_logger('eventdriver')
+logger = get_logger('test')
 
-core = WebDriverFactory().launch()
+core = WebDriverFactory.launch()
 driver = EventFiringWebDriver(core, EventListener())
 logger.info('WebDriver created.')
 ```
@@ -216,7 +216,7 @@ browserName=Safari
 ```python
 from pwdriver.core import WebDriverFactory
 
-driver = WebDriverFactory().launch()
+driver = WebDriverFactory.launch()
 ```
 
 
