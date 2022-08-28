@@ -25,7 +25,7 @@ def set_file_executable(path) -> None:
 def get_logger(name=None) -> Logger:
     import logging
     logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s %(levelname)-5s [%(name)s] '
                                   '%(funcName)s(%(pathname)s:%(lineno)d): %(message)s')
     console = logging.StreamHandler()
@@ -33,8 +33,8 @@ def get_logger(name=None) -> Logger:
     if not os.path.exists(os.path.join(ROOT_DIR, LOG_DIR)):
         os.makedirs(os.path.join(ROOT_DIR, LOG_DIR))
     file_handler = logging.FileHandler(os.path.join(ROOT_DIR, LOG_DIR, LOG_NAME))
-    console.setLevel(logging.INFO)
-    file_handler.setLevel(logging.INFO)
+    console.setLevel(logging.DEBUG)
+    file_handler.setLevel(logging.DEBUG)
     console.setFormatter(formatter)
     file_handler.setFormatter(formatter)
     logger.addHandler(console)
