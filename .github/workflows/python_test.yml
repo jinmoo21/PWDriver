@@ -40,9 +40,9 @@ jobs:
       - name: Make configuration file
         run: |
           echo [automation] > config.ini
-          echo automation.browser=${{ matrix.browser }} >> config.ini
-          echo automation.local=true >> config.ini
-          echo automation.url=http://localhost:4444 >> config.ini
+          echo local=true >> config.ini
+          echo url=http://localhost:4444 >> config.ini
+          echo target=${{ matrix.browser }} >> config.ini
       - name: Test in ${{ matrix.browser }} with unittest
         run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
@@ -70,9 +70,9 @@ jobs:
       - name: Make configuration file
         run: |
           echo [automation] > config.ini
-          echo automation.browser=safari >> config.ini
-          echo automation.local=true >> config.ini
-          echo automation.url=http://localhost:4444 >> config.ini
+          echo local=true >> config.ini
+          echo url=http://localhost:4444 >> config.ini
+          echo target=safari >> config.ini
       - name: Test in safari with unittest
         run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
@@ -102,9 +102,9 @@ jobs:
       - name: Make configuration file
         run: |
           echo [automation] > config.ini
-          echo automation.browser=gecko >> config.ini
-          echo automation.local=true >> config.ini
-          echo automation.url=http://localhost:4444 >> config.ini
+          echo local=true >> config.ini
+          echo url=http://localhost:4444 >> config.ini
+          echo target=gecko >> config.ini
       - name: Test in firefox with unittest
         run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
         env:
