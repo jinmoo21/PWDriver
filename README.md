@@ -11,7 +11,7 @@
 
 ## Motivation
 
-To simplify automation settings of each different version, and browser.
+To simplify automation settings of each different platform, version, browser. 
 
 ##### Support:
 
@@ -23,6 +23,8 @@ To simplify automation settings of each different version, and browser.
 
 - ~~IEDriver~~
 
+- ...and Android, iOS (See [With Appium](https://github.com/jinmoo21/PWDriver#with-appium) section)
+
 ## Usage
 
 ### 1. Install:
@@ -33,15 +35,15 @@ pip install pwdriver
 
 ### 2. Make 'config.ini' file and locate in your project directory.
 
-config.ini 's contents look like this.
+`config.ini` look like this.
 
 ```ini
 [automation]
-;automation.browser: chrome, gecko, edge, safari
-automation.browser=safari
-;automation.local: true, false
-automation.local=false
-automation.url=http://192.168.0.19:4444
+;if using remote webdriver, then local be false and url required.
+local=true
+url=http://localhost:4444
+;target: chrome, gecko, edge, safari
+target=chrome
 ```
 
 ### 3. Import WebDriverFactory.
@@ -51,12 +53,14 @@ Now, we can launch webdriver.
 ```python
 from pwdriver.core import WebDriverFactory
 
-driver = WebDriverFactory().launch()
+driver = WebDriverFactory.launch()
 ```
 
-### Different Usage(using selenium)
+## Alternative Usage
 
-Use with Chrome:
+This way doesn't make and doesn't use configuration file, but calls setup method of the driver in your test code.
+
+### with Chrome:
 
 ```python
 from selenium import webdriver
@@ -66,7 +70,7 @@ core.setup_chromedriver()
 driver = webdriver.Chrome()
 ```
 
-Use with FireFox:
+### with FireFox:
 
 ```python
 from selenium import webdriver
@@ -76,7 +80,7 @@ core.setup_geckodriver()
 driver = webdriver.Firefox()
 ```
 
-Use with Edge:
+### with Edge:
 
 ```python
 from selenium import webdriver
@@ -100,8 +104,6 @@ Modules that page elements and locators already implemented, so nevermind.
 
 
 ### Page Object Class
-
-`pages/bing_page.py` look like this.
 
 ```python
 from selenium.webdriver.common.by import By
@@ -128,8 +130,6 @@ class BingPage(BasePage):
 
 ### Test case
 
-`page_object.py` look like this.
-
 ```python
 from pwdriver.core import WebDriverFactory
 from tests.pages.bing_page import BingPage
@@ -139,7 +139,7 @@ import unittest
 
 class BrowserTest(unittest.TestCase):
     def setUp(self):
-        self.driver = WebDriverFactory().launch()
+        self.driver = WebDriverFactory.launch()
 
     def tearDown(self):
         self.driver.quit()
@@ -147,10 +147,11 @@ class BrowserTest(unittest.TestCase):
     def test_something(self):
         page = BingPage(self.driver)
         page.get()
-        page.type_keyword("치킨")
+        keyword = 'chicken'
+        page.type_keyword(keyword)
         page.click_search()
-        self.assertIn("https://www.bing.com/search?q=%EC%B9%98%ED%82%A8", self.driver.current_url)
-        self.assertEqual("치킨 - Search", self.driver.title)
+        self.assertIn(f'https://www.bing.com/search?q={keyword}', self.driver.current_url)
+        self.assertEqual(f'{keyword} - Search', self.driver.title)
 
 
 if __name__ == '__main__':
@@ -161,9 +162,11 @@ if __name__ == '__main__':
 
 If we want to use logging or want to see what events occured in webdriver,
 
-we can use get_logger or EventListener().
+we can use `get_logger()` or `EventListener()`.
 
 See below example code.
+
+### Test
 
 ```python
 from selenium.webdriver.support.events import EventFiringWebDriver
@@ -172,9 +175,9 @@ from pwdriver.core import WebDriverFactory
 from pwdriver.listener import EventListener
 from pwdriver.util import get_logger
 
-logger = get_logger('eventdriver')
+logger = get_logger('test')
 
-core = WebDriverFactory().launch()
+core = WebDriverFactory.launch()
 driver = EventFiringWebDriver(core, EventListener())
 logger.info('WebDriver created.')
 ```
@@ -182,6 +185,40 @@ logger.info('WebDriver created.')
 * Log level: `debug`, `info`, `warning`, `error`, `critical`
 * WebDriver event: `navigate`, `execute script`
 * WebElement event: `find`, `click`, `change value` 
+
+## With Appium
+
+This package also includes wrapped appium's remote webdriver.
+
+We could launch an appium driver using `config.ini` file that contains capabilities.
+
+See below configuration and example code.
+
+### Configuration
+
+```ini
+[automation]
+;if using appium, then local be false and url required.
+local=false
+url=http://localhost:4723
+;target: android, ios
+target=ios
+
+[mobile]
+;add capabilities for mobile testing.
+platformVersion=15.5
+deviceName=iPhone 13 mini
+browserName=Safari
+```
+
+### Test
+
+```python
+from pwdriver.core import WebDriverFactory
+
+driver = WebDriverFactory.launch()
+```
+
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjinmoo21%2FPWDriver.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjinmoo21%2FPWDriver?ref=badge_large)

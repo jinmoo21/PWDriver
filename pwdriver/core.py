@@ -1,3 +1,5 @@
+import configparser
+import glob
 import os
 import re
 from subprocess import Popen, PIPE
@@ -6,13 +8,14 @@ import requests
 import tarfile
 import zipfile
 
-from selenium import webdriver
+from appium.options.android import UiAutomator2Options
+from appium.options.ios import XCUITestOptions
 from selenium.webdriver.safari.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from pwdriver.val import CONFIG_NAME, CHROME, CHROMEDRIVER, CHROMEDRIVER_API, CHROMEDRIVER_NAME, DRIVER, \
     EDGE, EDGEDRIVER, EDGEDRIVER_API, EDGEDRIVER_NAME, GECKO, GECKODRIVER, GECKODRIVER_API, GECKODRIVER_NAME, \
-    OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP
+    OS_BIT, OS_NAME, ROOT_DIR, SAFARI, TAR_GZ, ZIP, ANDROID, IOS
 from pwdriver import util
 
 logger = util.get_logger('core')
@@ -185,39 +188,57 @@ def setup_edgedriver() -> None:
 
 
 class WebDriverFactory:
+    _automation_target = None
+    _mobile_caps = {}
+    _automation_local = None
+    _automation_url = None
+
     def __init__(self):
-        import configparser as cp
-        config = cp.ConfigParser()
-        import glob
+        config = configparser.ConfigParser()
+        config.optionxform = str
         config_path = glob.glob(os.path.join(ROOT_DIR, '**', CONFIG_NAME), recursive=True)
         if not config_path:
             raise NotImplementedError(f'Not found \'{CONFIG_NAME}\' configuration file in directory.')
         config.read(config_path[0])
-        self._automation_browser = config.get('automation', 'automation.browser')
-        if self._automation_browser not in [CHROME, GECKO, EDGE, SAFARI]:
-            raise NotImplementedError(f'Unsupported browser name: {self._automation_browser}')
-        self._automation_local = util.parse_boolean(config.get('automation', 'automation.local'))
-        if not self._automation_local:
-            self._automation_url = config.get('automation', 'automation.url')
+        WebDriverFactory._automation_target = config.get('automation', 'target')
+        if WebDriverFactory._automation_target not in [CHROME, GECKO, EDGE, SAFARI, ANDROID, IOS]:
+            raise NotImplementedError(f'Unsupported browser name: {WebDriverFactory._automation_target}')
+        if WebDriverFactory._automation_target in [ANDROID, IOS]:
+            try:
+                WebDriverFactory._mobile_caps = dict(config.items('mobile'))
+            except configparser.NoSectionError:
+                raise NotImplementedError(f'Capabilities for {WebDriverFactory._automation_target} must exist.')
+        WebDriverFactory._automation_local = util.parse_boolean(config.get('automation', 'local'))
+        if not WebDriverFactory._automation_local:
+            WebDriverFactory._automation_url = config.get('automation', 'url')
 
-    def launch(self, options=None) -> WebDriver:
+    @classmethod
+    def launch(cls, options=None) -> WebDriver:
+        c = cls()
+        from selenium import webdriver
         options_dict = {
             CHROME: webdriver.ChromeOptions(),
             GECKO: webdriver.FirefoxOptions(),
             EDGE: webdriver.EdgeOptions(),
-            SAFARI: webdriver.safari.options.Options()
+            SAFARI: webdriver.safari.options.Options(),
+            ANDROID: UiAutomator2Options().load_capabilities(c._mobile_caps),
+            IOS: XCUITestOptions().load_capabilities(c._mobile_caps)
         }
-        if self._automation_local:
-            if self._automation_browser == CHROME:
+        if c._automation_local:
+            if c._automation_target == CHROME:
                 setup_chromedriver()
                 return webdriver.Chrome(options=options)
-            if self._automation_browser == GECKO:
+            if c._automation_target == GECKO:
                 setup_geckodriver()
                 return webdriver.Firefox(options=options)
-            if self._automation_browser == EDGE:
+            if c._automation_target == EDGE:
                 setup_edgedriver()
                 return webdriver.Edge(options=options)
-            if self._automation_browser == SAFARI:
+            if c._automation_target == SAFARI:
                 return webdriver.Safari(options=options if options is not None else options_dict[SAFARI])
-        return webdriver.Remote(command_executor=self._automation_url,
-                                options=options if options is not None else options_dict[self._automation_browser])
+        if c._automation_target not in [ANDROID, IOS]:
+            return webdriver.Remote(command_executor=c._automation_url,
+                                    options=options if options is not None else options_dict[c._automation_target])
+        from appium import webdriver
+        return webdriver.Remote(command_executor=c._automation_url,
+                                options=options_dict[c._automation_target])

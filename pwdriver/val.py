@@ -31,3 +31,5 @@ EDGE = 'edge'
 EDGEDRIVER = f'ms{EDGE}{DRIVER}'
 EDGEDRIVER_NAME = f'{EDGEDRIVER}{EXE}' if OS_NAME == 'win' else EDGEDRIVER
 SAFARI = 'safari'
+ANDROID = 'android'
+IOS = 'ios'
