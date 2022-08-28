@@ -31,6 +31,6 @@ setuptools.setup(
         'selenium>=4.4.0',
         'Appium-Python-Client>=2.6.1',
         'requests>=2.28.1',
-        'setuptools>=65.1.1'
+        'setuptools>=65.3.0'
     ]
 )
