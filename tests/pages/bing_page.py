@@ -5,7 +5,7 @@ from pwdriver.page import BasePage
 
 class BingPage(BasePage):
     def __init__(self, driver):
-        super().__init__(driver)
+        super().__init__(driver, jquery_defined=False, angular_defined=False)
         self._url = 'https://www.bing.com'
         self._locator = {
             'input': (By.CSS_SELECTOR, 'input#sb_form_q'),
