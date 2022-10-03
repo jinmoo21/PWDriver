@@ -1,12 +1,12 @@
 import platform
 import sys
 
-platform_dict = {
+PLATFORM_DICT = {
     'Windows': 'win',
     'Darwin': 'mac',
     'Linux': 'linux'
 }
-OS_NAME = platform_dict[platform.system()]
+OS_NAME = PLATFORM_DICT[platform.system()]
 OS_BIT = '64' if platform.architecture()[0] == '64bit' else '32'
 EXE = '.exe'
 INI = '.ini'

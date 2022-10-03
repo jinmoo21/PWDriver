@@ -23,7 +23,7 @@ driver_path = os.path.join(ROOT_DIR, DRIVER)
 dir_regex = r'\S+[dD]river'
 
 
-def _get_local_chrome_version() -> str:
+def __get_local_chrome_version() -> str:
     if OS_NAME == 'win':
         path = ['Program Files', 'Program Files (x86)']
         for loc in path:
@@ -50,7 +50,7 @@ def _get_local_chrome_version() -> str:
     return version
 
 
-def _get_latest_chrome_version(version) -> str:
+def __get_latest_chrome_version(version: str) -> str:
     latest_release = requests.get(f'{CHROMEDRIVER_API}/LATEST_RELEASE_{re.split(r"[.]", version)[0]}')
     global driver_path
     if not driver_path.endswith(latest_release.text):
@@ -59,10 +59,10 @@ def _get_latest_chrome_version(version) -> str:
     return latest_release.text
 
 
-def _download_chromedriver(version) -> None:
+def __download_chromedriver(version: str) -> None:
     global driver_path
     if not os.path.isfile(os.path.join(driver_path, CHROMEDRIVER_NAME)):
-        logger.info(f'Not found executable {CHROMEDRIVER}. {CHROMEDRIVER} will be downloaded.')
+        logger.info(f'Not found executable {CHROMEDRIVER}. {CHROMEDRIVER} will be downloaded in \'{driver_path}\'.')
         download_url = f'{CHROMEDRIVER_API}/{version}/chromedriver_{OS_NAME}' + \
                        (OS_BIT if OS_NAME != 'win' else '32') + ZIP
         file = requests.get(download_url, stream=True)
@@ -81,14 +81,14 @@ def _download_chromedriver(version) -> None:
 
 
 def setup_chromedriver() -> None:
-    _download_chromedriver(_get_latest_chrome_version(_get_local_chrome_version()))
+    __download_chromedriver(__get_latest_chrome_version(__get_local_chrome_version()))
     global driver_path
     util.set_file_executable(os.path.join(driver_path, CHROMEDRIVER_NAME))
     os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(driver_path)}'
     driver_path = os.path.join(ROOT_DIR, DRIVER)
 
 
-def _get_latest_gecko_version() -> str:
+def __get_latest_gecko_version() -> str:
     version = re.split(r'/+', requests.get(f'{GECKODRIVER_API}/latest', allow_redirects=True).url)[-1]
     global driver_path
     if not driver_path.endswith(version):
@@ -96,10 +96,10 @@ def _get_latest_gecko_version() -> str:
     return version
 
 
-def _download_geckodriver(version) -> None:
+def __download_geckodriver(version: str) -> None:
     global driver_path
     if not os.path.isfile(os.path.join(driver_path, GECKODRIVER_NAME)):
-        logger.info(f'Not found executable {GECKODRIVER}. {GECKODRIVER} will be downloaded.')
+        logger.info(f'Not found executable {GECKODRIVER}. {GECKODRIVER} will be downloaded in \'{driver_path}\'.')
         postfix = OS_NAME + (OS_BIT if OS_NAME != 'mac' else 'os') + (ZIP if OS_NAME == 'win' else TAR_GZ)
         download_url = f'{GECKODRIVER_API}/download/{version}/geckodriver-{version}-{postfix}'
         file = requests.get(download_url, stream=True)
@@ -123,14 +123,14 @@ def _download_geckodriver(version) -> None:
 
 
 def setup_geckodriver() -> None:
-    _download_geckodriver(_get_latest_gecko_version())
+    __download_geckodriver(__get_latest_gecko_version())
     global driver_path
     util.set_file_executable(os.path.join(driver_path, GECKODRIVER_NAME))
     os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(driver_path)}'
     driver_path = os.path.join(ROOT_DIR, DRIVER)
 
 
-def _get_local_edge_version() -> str:
+def __get_local_edge_version() -> str:
     if OS_NAME == 'win':
         path = ['Program Files', 'Program Files (x86)']
         for loc in path:
@@ -157,12 +157,12 @@ def _get_local_edge_version() -> str:
     return version
 
 
-def _download_edgedriver(version) -> None:
+def __download_edgedriver(version: str) -> None:
     global driver_path
     if not driver_path.endswith(version):
         driver_path = os.path.join(driver_path, EDGE, version)
     if not os.path.isfile(os.path.join(driver_path, EDGEDRIVER_NAME)):
-        logger.info(f'Not found executable {EDGEDRIVER}. {EDGEDRIVER} will be downloaded.')
+        logger.info(f'Not found executable {EDGEDRIVER}. {EDGEDRIVER} will be downloaded in \'{driver_path}\'.')
         download_url = f'{EDGEDRIVER_API}/{version}/edgedriver_{OS_NAME}{OS_BIT}{ZIP}'
         file = requests.get(download_url, stream=True)
         file_name = f'{EDGEDRIVER}{ZIP}'
@@ -180,7 +180,7 @@ def _download_edgedriver(version) -> None:
 
 
 def setup_edgedriver() -> None:
-    _download_edgedriver(_get_local_edge_version())
+    __download_edgedriver(__get_local_edge_version())
     global driver_path
     util.set_file_executable(os.path.join(driver_path, EDGEDRIVER_NAME))
     os.environ['PATH'] += f'{os.pathsep}{os.path.abspath(driver_path)}'
@@ -198,7 +198,7 @@ class WebDriverFactory:
         config.optionxform = str
         config_path = glob.glob(os.path.join(ROOT_DIR, '**', CONFIG_NAME), recursive=True)
         if not config_path:
-            raise NotImplementedError(f'Not found \'{CONFIG_NAME}\' configuration file in directory.')
+            raise NotImplementedError(f'Not found \'{CONFIG_NAME}\' configuration file in \'{ROOT_DIR}\'.')
         config.read(config_path[0])
         WebDriverFactory._automation_target = config.get('automation', 'target')
         if WebDriverFactory._automation_target not in [CHROME, GECKO, EDGE, SAFARI, ANDROID, IOS]:
@@ -235,7 +235,7 @@ class WebDriverFactory:
                 setup_edgedriver()
                 return webdriver.Edge(options=options)
             if c._automation_target == SAFARI:
-                return webdriver.Safari(options=options if options is not None else options_dict[SAFARI])
+                return webdriver.Safari(options=options if options is not None else options_dict[c._automation_target])
         if c._automation_target not in [ANDROID, IOS]:
             return webdriver.Remote(command_executor=c._automation_url,
                                     options=options if options is not None else options_dict[c._automation_target])

@@ -2,7 +2,7 @@ import os
 from logging import Logger
 
 
-def parse_boolean(arg):
+def parse_boolean(arg: str) -> bool:
     return arg.lower() in ['true', 'y', 'yes']
 
 
@@ -30,8 +30,7 @@ def get_logger(name=None) -> Logger:
                                   '%(funcName)s(%(pathname)s:%(lineno)d): %(message)s')
     console = logging.StreamHandler()
     from pwdriver.val import LOG_DIR, LOG_NAME, ROOT_DIR
-    if not os.path.exists(os.path.join(ROOT_DIR, LOG_DIR)):
-        os.makedirs(os.path.join(ROOT_DIR, LOG_DIR))
+    os.makedirs(os.path.join(ROOT_DIR, LOG_DIR), mode=0o777, exist_ok=True)
     file_handler = logging.FileHandler(os.path.join(ROOT_DIR, LOG_DIR, LOG_NAME))
     console.setLevel(logging.DEBUG)
     file_handler.setLevel(logging.DEBUG)

@@ -21,8 +21,6 @@ class EventDriverTest(unittest.TestCase):
 
     def test_something(self):
         page = BingPage(self.driver)
-        page.jquery = False
-        page.angular = False
         page.get()
         page.wait_until_fully_loaded()
         keyword = 'chicken'
