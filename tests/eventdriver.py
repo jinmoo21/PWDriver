@@ -31,6 +31,7 @@ class EventDriverTest(unittest.TestCase):
         self.assertEqual(f'{keyword} - Search', self.driver.title)
 
     def test_02(self):
+        self.driver.get('https://www.google.com')
         page = BingPage(self.driver)
         page.timeout = 3
         page.jquery = True
@@ -39,7 +40,7 @@ class EventDriverTest(unittest.TestCase):
         page.wait_until_fully_loaded()
         self.driver.back()
         page.wait_until_fully_loaded()
-        self.assertIn('data:,', self.driver.current_url)
+        self.assertIn('https://www.google.com', self.driver.current_url)
         self.driver.forward()
         page.wait_until_fully_loaded()
         self.assertIn(f'https://www.bing.com', self.driver.current_url)
