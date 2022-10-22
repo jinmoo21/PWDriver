@@ -28,7 +28,7 @@ class EventDriverTest(unittest.TestCase):
         page.click_search()
         page.wait_until_fully_loaded()
         self.assertIn(f'https://www.bing.com/search?q={keyword}', self.driver.current_url)
-        self.assertEqual(f'{keyword} - 검색', self.driver.title)
+        self.assertEqual(f'{keyword} - Search', self.driver.title)
 
     def test_02(self):
         page = BingPage(self.driver)
