@@ -74,7 +74,7 @@ jobs:
           echo url=http://localhost:4444 >> config.ini
           echo target=safari >> config.ini
       - name: Test in safari with unittest
-        run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
+        run: coverage run --omit="tests/*" -m unittest discover tests/ safari.py
         env:
           DISPLAY: :99
       - name: Upload coverage
@@ -106,7 +106,7 @@ jobs:
           echo url=http://localhost:4444 >> config.ini
           echo target=gecko >> config.ini
       - name: Test in firefox with unittest
-        run: coverage run --omit="tests/*" -m unittest discover tests/ eventdriver.py
+        run: coverage run --omit="tests/*" -m unittest discover tests/ firefox.py
         env:
           DISPLAY: :99
       - name: Upload coverage
