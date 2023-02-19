@@ -1,49 +1,48 @@
 [project]
-name='pwdriver'
-version='0.27.1'
-description='It will download a WebDriver, and then set basic configuration automatically.'
-readme='README.md'
-requires-python='>=3.7'
-license={file='LICENSE'}
+name="pwdriver"
+version="0.27.1"
+description="It will download a WebDriver, and then set basic configuration automatically."
+readme="README.md"
+requires-python=">=3.7"
+license={file="LICENSE"}
 keywords=[
-    'python',
-    'testing',
-    'automation',
-    'webdriver',
-    'selenium',
-    'test-automation',
-    'selenium-webdriver',
-    'appium',
-    'appium-webdriver'
+    "python",
+    "testing",
+    "automation",
+    "webdriver",
+    "selenium",
+    "test-automation",
+    "selenium-webdriver",
+    "appium",
+    "appium-webdriver"
 ]
 authors=[
-    {name='Jinmoo Han', email='jinmoo21@naver.com'}
-]
-maintainers=[
-    {name='Jinmoo Han', email='jinmoo21@naver.com'}
+    {name="Jinmoo Han", email="jinmoo21@naver.com"},
 ]
 classifiers=[
-    'Topic :: Software Development :: Quality Assurance',
-    'Topic :: Software Development :: Testing',
-    'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'License :: OSI Approved :: MIT License',
-    'Operating System :: OS Independent'
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
 ]
 dependencies=[
-    'selenium>=4.8.2',
-    'Appium-Python-Client>=2.8.1',
-    'requests>=2.28.2',
-    'setuptools>=67.3.2'
+    "selenium",
+    "Appium-Python-Client",
+    "requests",
+    "setuptools"
 ]
 
 [project.urls]
-'Homepage'='https://github.com/jinmoo21/pwdriver'
-'Bug Reports'='https://github.com/jinmoo21/pwdriver/issues'
+"Homepage"="https://github.com/jinmoo21/pwdriver"
+"Bug Reports"="https://github.com/jinmoo21/pwdriver/issues"
 
 [build-system]
-requires=['setuptools>=67.3.2', 'wheel']
-build-backend='setuptools.build_meta'
+requires=["setuptools>=67.3.2",
+    "wheel"
+]
+build-backend="setuptools.build_meta"
