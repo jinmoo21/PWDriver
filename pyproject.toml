@@ -16,7 +16,7 @@ keywords=[
     'appium',
     'appium-webdriver'
 ]
-author=[
+authors=[
     {name='Jinmoo Han', email='jinmoo21@naver.com'}
 ]
 maintainers=[
