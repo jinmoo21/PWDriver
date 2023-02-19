@@ -1,3 +1,9 @@
+[build-system]
+requires=["setuptools>=67.3.2",
+    "wheel"
+]
+build-backend="setuptools.build_meta"
+
 [project]
 name="pwdriver"
 version="0.27.1"
@@ -15,6 +21,12 @@ keywords=[
     "selenium-webdriver",
     "appium",
     "appium-webdriver"
+]
+authors=[
+    {name='Jinmoo Han', email='jinmoo21@naver.com'},
+]
+maintainers=[
+    {name='Jinmoo Han', email='jinmoo21@naver.com'},
 ]
 classifiers=[
     "Topic :: Software Development :: Quality Assurance",
@@ -34,20 +46,6 @@ dependencies=[
     "setuptools"
 ]
 
-[[project.authors]]
-name="Jinmoo Han"
-email="jinmoo21@naver.com"
-
-[[project.maintainers]]
-name="Jinmoo Han"
-email="jinmoo21@naver.com"
-
 [project.urls]
 "Homepage"="https://github.com/jinmoo21/pwdriver"
 "Bug Reports"="https://github.com/jinmoo21/pwdriver/issues"
-
-[build-system]
-requires=["setuptools>=67.3.2",
-    "wheel"
-]
-build-backend="setuptools.build_meta"
