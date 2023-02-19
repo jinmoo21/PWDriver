@@ -16,9 +16,6 @@ keywords=[
     "appium",
     "appium-webdriver"
 ]
-authors=[
-    {name="Jinmoo Han", email="jinmoo21@naver.com"},
-]
 classifiers=[
     "Topic :: Software Development :: Quality Assurance",
     "Topic :: Software Development :: Testing",
@@ -36,6 +33,14 @@ dependencies=[
     "requests",
     "setuptools"
 ]
+
+[[project.authors]]
+name="Jinmoo Han"
+email="jinmoo21@naver.com"
+
+[[project.maintainers]]
+name="Jinmoo Han"
+email="jinmoo21@naver.com"
 
 [project.urls]
 "Homepage"="https://github.com/jinmoo21/pwdriver"
