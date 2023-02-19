@@ -8,12 +8,6 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pwdriver"
 version = "0.27.1"
-authors = [
-    { name = "Jinmoo Han", email = "jinmoo21@naver.com" }
-]
-maintainers = [
-    { name = "Jinmoo Han", email = "jinmoo21@naver.com" }
-]
 description = "It will download a WebDriver, and then set basic configuration automatically."
 readme = "README.md"
 requires-python = ">=3.7"
