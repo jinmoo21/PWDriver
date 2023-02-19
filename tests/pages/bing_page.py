@@ -8,7 +8,7 @@ class BingPage(BasePage):
         super().__init__(driver, jquery_defined=False, angular_defined=False)
         self._url = 'https://www.bing.com'
         self._locator = {
-            'input': (By.CSS_SELECTOR, 'input#sb_form_q'),
+            'input': (By.CSS_SELECTOR, 'textarea#sb_form_q'),
             'search': (By.CSS_SELECTOR, 'label#search_icon')
         }
 
