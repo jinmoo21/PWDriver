@@ -5,6 +5,16 @@ description='It will download a WebDriver, and then set basic configuration auto
 readme='README.md'
 requires-python='>=3.7'
 license={file='LICENSE'}
+keywords=[
+    'python',
+    'testing',
+    'automation',
+    'webdriver', 'selenium',
+    'test-automation',
+    'selenium-webdriver',
+    'appium',
+    'appium-webdriver'
+]
 author=[
     {name='Jinmoo Han', email='jinmoo21@naver.com'}
 ]
