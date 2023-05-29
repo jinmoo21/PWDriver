@@ -1,18 +1,17 @@
-[build-system]
-requires = [
-    "setuptools>=67.3.2",
-    "wheel"
-]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "pwdriver"
-version = "0.27.1"
+version = "0.27.2"
 description = "It will download a WebDriver, and then set basic configuration automatically."
+license = "MIT"
+authors = [
+    "Jinmoo Han <jinmoo21@naver.com>",
+]
+maintainers = [
+    "Jinmoo Han <jinmoo21@naver.com>",
+]
 readme = "README.md"
-requires-python = ">=3.7"
-license = { file = "LICENSE" }
-keywords=[
+repository = "https://github.com/jinmoo21/pwdriver"
+keywords = [
     "python",
     "testing",
     "automation",
@@ -34,12 +33,20 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"
 ]
-dependencies = [
-    "selenium>=4.8.2",
-    "Appium-Python-Client>=2.8.1",
-    "requests>=2.28.2",
-    "setuptools>=67.3.2"
+packages = [
+    { include = "pwdriver" },
 ]
 
-[project.urls]
-homepage = "https://github.com/jinmoo21/pwdriver"
+[tool.poetry.dependencies]
+python = "^3.7"
+selenium = "^4.9.1"
+Appium-Python-Client = "^2.10.1"
+requests = "^2.31.0"
+
+[tool.poetry.urls]
+"Homepage" = "https://github.com/jinmoo21/pwdriver"
+"Bug Reports" = "https://github.com/jinmoo21/pwdriver/issues"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
