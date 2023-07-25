@@ -1,7 +1,7 @@
 # PWDriver (PyWebDriver)
 
 [![E2e test](https://github.com/jinmoo21/pwdriver/actions/workflows/python_test.yml/badge.svg)](https://github.com/jinmoo21/pwdriver/actions/workflows/python_test.yml)
-[![Code Coverage](https://codecov.io/gh/jinmoo21/pwdriver/branch/master/graph/badge.svg)](https://codecov.io/gh/jinmoo21/pwdriver)
+[![Code Coverage](https://codecov.io/gh/jinmoo21/pwdriver/branch/master/graph/badge.svg?branch=master&kill_cache=1)](https://codecov.io/gh/jinmoo21/pwdriver)
 
 [![Release status](https://github.com/jinmoo21/pwdriver/actions/workflows/python_release.yml/badge.svg)](https://github.com/jinmoo21/pwdriver/actions/workflows/python_release.yml)
 [![PyPI version](https://badge.fury.io/py/pwdriver.svg)](https://badge.fury.io/py/pwdriver)
@@ -149,7 +149,7 @@ class BrowserTest(unittest.TestCase):
         page.get()
         keyword = 'chicken'
         page.type_keyword(keyword)
-        page.click_search()
+        page.submit_keyword()
         self.assertIn(f'https://www.bing.com/search?q={keyword}', self.driver.current_url)
         self.assertEqual(f'{keyword} - Search', self.driver.title)
 

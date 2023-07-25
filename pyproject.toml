@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pwdriver"
-version = "0.27.2"
+version = "0.27.3"
 description = "It will download a WebDriver, and then set basic configuration automatically."
 license = "MIT"
 authors = [
@@ -39,8 +39,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-selenium = "^4.9.1"
-Appium-Python-Client = "^2.10.1"
+selenium = "^4.10.0"
+Appium-Python-Client = "^2.11.1"
 requests = "^2.31.0"
 
 [tool.poetry.urls]

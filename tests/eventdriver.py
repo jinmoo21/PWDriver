@@ -25,7 +25,7 @@ class EventDriverTest(unittest.TestCase):
         page.wait_until_fully_loaded()
         keyword = 'chicken'
         page.type_keyword(keyword)
-        page.click_search()
+        page.submit_keyword()
         page.wait_until_fully_loaded()
         self.assertIn(f'q={keyword}', self.driver.current_url)
         self.assertIn(f'{keyword}', self.driver.title)
