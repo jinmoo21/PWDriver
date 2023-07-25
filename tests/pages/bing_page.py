@@ -15,6 +15,9 @@ class BingPage(BasePage):
     def type_keyword(self, text) -> None:
         self._by('input').send_keys(text)
 
+    def submit_keyword(self) -> None:
+        self._by('input').submit()
+
     def click_search(self) -> BasePage:
         self._by('search').click()
         return BingPage(BasePage)
