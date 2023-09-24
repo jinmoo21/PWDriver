@@ -25,7 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pwdriver codecov
       - name: Install chrome
-        uses: nanasess/setup-chromedriver@v1.0.7
+        uses: nanasess/setup-chromedriver@v2
         if: matrix.browser == 'chrome'
       - name: Setup chromedriver
         run: chromedriver --url-base=/wd/hub &
